@@ -146,8 +146,7 @@
 			box-sizing: border-box;
 			border-radius: 24rpx;
 			margin-bottom: 36rpx;
-			
-			
+			box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 
 			.information-item-top {
 				width: 100%;

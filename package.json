@@ -97,7 +97,7 @@
     "miniprogram-api-typings": "^3.4.6",
     "postcss-comment": "^2.0.0",
     "sass": "^1.49.9",
-    "sass-loader": "10",
+    "sass-loader": "8.0.2",
     "typescript": "^3.0.0",
     "vue-template-compiler": "^2.6.11"
   },

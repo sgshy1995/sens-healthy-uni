@@ -52,7 +52,7 @@
 				</view>
 			</view>
 		</u-navbar> -->
-		<PainQA v-show="switchType === 0"></PainQA>
+		<PainQA ref="PainQA" v-show="switchType === 0"></PainQA>
 		<RehabilitationInformation v-show="switchType === 1"></RehabilitationInformation>
 	</view>
 </template>
@@ -97,9 +97,21 @@
 				return this.$store.state.user.userInfo
 			}
 		},
+		onShow() {
+			this.$nextTick(()=>{
+				if(this.$refs.PainQA){
+					this.$refs.PainQA.getQuestionsList()
+				}
+			})
+		},
 		methods: {
 			handleChangeSwitch(){
 				this.switchType = this.switchType === 0 ? 1 : 0
+				this.$nextTick(()=>{
+					if(this.$refs.PainQA){
+						this.$refs.PainQA.getQuestionsList()
+					}
+				})
 			},
 			showCamera(){
 				

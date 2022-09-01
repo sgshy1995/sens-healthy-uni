@@ -3,38 +3,74 @@
 		<scroll-view scroll-y class="update-record-box">
 			<u-navbar placeholder leftIconSize="14" border bgColor="#4F68B0" title="发布问答" leftIconColor="#fff"
 				:titleStyle="{color: '#fff'}" @leftClick="leftClick" leftText="返回">
-				<view class="slot-right" slot="right">
+				<view class="slot-right" slot="right" @click="handlePublish">
 					发布
 				</view>
 			</u-navbar>
 			<view class="update-record-body">
+				<uni-section lineColor="#4F68B0" title="伤痛类型"
+					subTitle="伤痛类型，如受伤部位、受伤类型等" type="line" padding>
+					<uni-easyinput type="text" v-model="form.pain_type" placeholder="请输入内容"></uni-easyinput>
+				</uni-section>
 				<uni-section lineColor="#4F68B0" title="问题描述"
 					subTitle="伤病情况介绍，受伤时间，受伤过程，受伤部位，症状描述，受伤部位活动功能是否受影响，日常生活活动是否受影响等" type="line" padding>
 					<uni-easyinput type="textarea" v-model="form.description" placeholder="请输入内容"></uni-easyinput>
 				</uni-section>
 				<uni-section lineColor="#4F68B0" title="诊疗史" subTitle="什么时间在哪里做过什么治疗，治疗效果如何，是否有明确诊断为何病" type="line"
 					padding>
-					<uni-easyinput type="textarea" v-model="form.history" placeholder="请输入内容"></uni-easyinput>
+					<uni-easyinput type="textarea" v-model="form.injury_history" placeholder="请输入内容"></uni-easyinput>
 				</uni-section>
 				<uni-section lineColor="#4F68B0" title="上传照片或视频" subTitle="影像资料，诊断报告，受伤部位等资料，最多上传9张" type="line"
 					padding>
-					<u-upload :fileList="fileList1" @afterRead="afterRead" @delete="deletePic" name="1" multiple
+					<u-upload :fileList="fileListData" @afterRead="afterRead" @delete="deletePic" name="Data" multiple
 						:maxCount="9"></u-upload>
 				</uni-section>
+				<uni-section lineColor="#4F68B0" title="匿名提问" subTitle="发布者可以选择匿名提问，发布者的个人信息将得到匿名保护，但是可能会对问题的关注度造成影响" type="line" padding>
+					<view class="uni-section-body">
+						<u-switch activeColor="#4F68B0" v-model="anonymity" @change="changeAnonymity" size="24"></u-switch>
+					</view>
+				</uni-section>
+				<!-- <uni-section lineColor="#4F68B0" title="问题赏金" subTitle="发布者可以选择提供问题赏金，以鼓励获得更多的专业回答" type="line" padding>
+					<view class="uni-section-body">
+						<u-switch activeColor="#4F68B0" v-model="ifOffer" @change="changeOffer" size="24"></u-switch>
+						<view v-if="ifOffer" class="uni-section-body-in" @click="handleShowNumber">
+							<text class="uni-section-body-title">赏金金额： </text>
+							<text
+								class="uni-section-body-text">{{ form.consulting_fee ? '¥ ' + form.consulting_fee : '请输入赏金金额' }}</text>
+						</view>
+						<keyboard-price max="10000" focusColor="#4F68B0" ref="keyboardPrice" type="digit"
+							v-model="consulting_fee" @onDone="onDonePrice"></keyboard-price>
+					</view>
+				</uni-section> -->
 			</view>
 		</scroll-view>
 	</view>
 </template>
 
 <script>
+	import keyboardPrice from '@/components/liujto-keyboard/liujto-keyboard-price.vue'
+	import {
+		createQuestionsAction,
+		questionUploadAction
+	} from '@/service/service'
 	export default {
+		components: {
+			keyboardPrice
+		},
 		data() {
 			return {
 				form: {
+					pain_type: '',
 					description: '',
-					history: ''
+					injury_history: '',
+					consulting_fee: '',
+					anonymity: 0
 				},
-				fileList1: []
+				fileListData: [],
+				ifOffer: false,
+				consulting_fee: '',
+				baseUrl: process.env.VUE_APP_API_BASE_URL + '/',
+				anonymity: false
 			}
 		},
 		watch: {
@@ -46,11 +82,47 @@
 			}
 		},
 		methods: {
+			handlePublish() {
+				if (!this.form.pain_type) {
+					this.$toast('请输入伤痛类型');
+				} else if (!this.form.description) {
+					this.$toast('请输入问题描述');
+				} else if (!this.form.injury_history) {
+					this.$toast('请输入诊疗史');
+				} else {
+					this.$loadingOn()
+					Promise.all(this.fileListData.filter(item => !item.message).map(item => {
+						return questionUploadAction(item.url)
+					})).then(responses => {
+						createQuestionsAction({
+							...this.form,
+							image_data: this.fileListData.filter(item => item.message).map(item => item.source).concat(responses.map(res => JSON.parse(res.data).data)).join()
+						}).then(res => {
+							this.$loadingOff()
+							this.close()
+							this.$toast(res.message || '发布成功');
+						}).catch(err => {
+							this.$loadingOff()
+						})
+					})
+				}
+			},
 			close() {
 				uni.navigateBack()
 			},
 			leftClick() {
 				this.close()
+			},
+			onDonePrice(price) {
+				console.log('onDonePrice', price)
+				if (!price) {
+					this.consulting_fee = this.form.consulting_fee
+				} else if (Number(price) < 1) {
+					this.$toast('金额不能小于1');
+					this.consulting_fee = this.form.consulting_fee
+				} else {
+					this.form.consulting_fee = this.consulting_fee
+				}
 			},
 			showView(url) {
 				// 预览图片
@@ -58,6 +130,16 @@
 					urls: [url],
 					indicator: 'none'
 				});
+			},
+			changeAnonymity(value) {
+				this.form.anonymity = value ? 1 : 0
+			},
+			changeOffer(value) {
+				this.consulting_fee = ''
+				this.form.consulting_fee = ''
+			},
+			handleShowNumber() {
+				this.$refs.keyboardPrice.open()
 			},
 			// 删除图片
 			deletePic(event) {
@@ -71,42 +153,9 @@
 				lists.map((item) => {
 					this[`fileList${event.name}`].push({
 						...item,
-						status: 'uploading',
-						message: '上传中'
+						status: '',
+						message: ''
 					})
-				})
-				for (let i = 0; i < lists.length; i++) {
-					const result = await this.uploadFilePromise(lists[i].url)
-					let item = this[`fileList${event.name}`][fileListLen]
-					this[`fileList${event.name}`].splice(fileListLen, 1, Object.assign(item, {
-						status: 'success',
-						message: '',
-						url: result
-					}))
-					fileListLen++
-				}
-			},
-			uploadFilePromise(url) {
-				return new Promise((resolve, reject) => {
-					let a = uni.uploadFile({
-						url: 'http://localhost:8080/upload', // 仅为示例，非真实的接口地址
-						filePath: url,
-						name: 'file',
-						formData: {
-							user: 'test'
-						},
-						success: (res) => {
-							setTimeout(() => {
-								resolve(res.data.data)
-							}, 1000)
-						},
-						fail: (err) => {
-							console.log('err', err)
-							setTimeout(() => {
-								resolve(url)
-							}, 1000)
-						}
-					});
 				})
 			}
 		}
@@ -121,9 +170,10 @@
 
 		.update-record-box {
 			width: 100%;
-			height: 100%;
-			
-			.slot-right{
+			box-sizing: border-box;
+			padding-bottom: 24rpx;
+
+			.slot-right {
 				background: #fff;
 				color: #4F68B0;
 				padding: 0 20rpx;
@@ -139,6 +189,32 @@
 
 		.update-record-body {
 			width: 100%;
+		}
+
+		.uni-section-body {
+			width: 100%;
+			display: flex;
+			align-items: center;
+
+			.uni-section-body-in {
+				width: 100%;
+				font-size: 14px;
+
+				.uni-section-body-title {
+					padding-right: 12rpx;
+					color: #777;
+				}
+
+				.uni-section-body-text {
+					color: #4F68B0;
+					font-weight: bold;
+				}
+			}
+
+			.u-switch {
+				margin-right: 24rpx;
+				margin-left: 24rpx;
+			}
 		}
 	}
 </style>

@@ -542,7 +542,7 @@
 		.shopping-cart{
 			position: fixed;
 			right: 24rpx;
-			bottom: 140rpx;
+			bottom: 190rpx;
 			width: 80rpx;
 			height: 80rpx;
 			background: #4F68B0;

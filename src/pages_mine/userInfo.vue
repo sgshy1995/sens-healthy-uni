@@ -137,7 +137,15 @@
 				this.singleIndex = this.userInfo.gender || 0
 			},
 			handleUpdateGender(e) {
-				
+				this.$loadingOn();
+				updateUserAction({id: this.userInfo.id, gender: e.indexs[0]}).then(res=>{
+					this.$loadingOff();
+					this.$store.dispatch('getUserInfo')
+					this.$toast('信息已更新');
+					this.showPickerGender = false
+				}).catch(err=>{
+					this.$loadingOff();
+				})
 			},
 			handleUpdateName() {
 				if(!this.name){

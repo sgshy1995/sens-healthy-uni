@@ -148,3 +148,146 @@ export const logoutAction = (user: Record<string,any>): Promise<Record<string,an
 	data: user
   })
 }
+
+// 问题列表获取
+const getQuestionsUrl = '/pain_question'
+export const getQuestionsAction = (): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: getQuestionsUrl,
+    method: 'GET'
+  })
+}
+
+// 自定义问题列表获取
+const getCustomQuestionsUrl = '/pain_question/custom'
+export const getCustomQuestionsAction = (question: Record<string,any>): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: getCustomQuestionsUrl,
+    method: 'GET',
+	data: question
+  })
+}
+
+// 根据id问题获取
+const getQuestionByIdUrl = (id:string)=>`/pain_question/${id}`
+export const getQuestionByIdAction = (id:string): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: getQuestionByIdUrl(id),
+    method: 'GET'
+  })
+}
+
+// 创建问题
+const createQuestionsUrl = '/pain_question'
+export const createQuestionsAction = (question: Record<string,any>): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: createQuestionsUrl,
+    method: 'POST',
+	data: question
+  })
+}
+
+// 更新问题
+const updateQuestionUrl = '/pain_question'
+export const updateQuestionAction = (question: Record<string,any>): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: updateQuestionUrl,
+    method: 'PUT',
+	data: question
+  })
+}
+
+// 更新问题收藏
+const updateQuestionCollectUrl = '/pain_question/collect'
+export const updateQuestionCollectAction = (id: string, status: number): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: updateQuestionCollectUrl,
+    method: 'PUT',
+	data: {
+		id,
+		status
+	}
+  })
+}
+
+// 问题影像资料上传
+const questionUploadUrl = '/pain_question/upload/data'
+export const questionUploadAction = (path:string): Promise<Record<string,any>> => {
+	return doUploadAction({
+		url: questionUploadUrl
+	},path)
+}
+
+// 答复列表获取
+const getRepliesUrl = '/pain_reply/custom'
+export const getRepliesAction = (question_id: string): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: getRepliesUrl,
+    method: 'GET',
+	data: {question_id}
+  })
+}
+
+// 创建答复
+const createReplyUrl = '/pain_reply'
+export const createReplyAction = (reply: Record<string,any>): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: createReplyUrl,
+    method: 'POST',
+	data: reply
+  })
+}
+
+// 更新答复
+const updateReplyUrl = '/pain_reply'
+export const updateReplyAction = (reply: Record<string,any>): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: updateReplyUrl,
+    method: 'PUT',
+	data: reply
+  })
+}
+
+// 答复影像资料上传
+const replyUploadUrl = '/pain_reply/upload/data'
+export const replyUploadAction = (path:string): Promise<Record<string,any>> => {
+	return doUploadAction({
+		url: replyUploadUrl
+	},path)
+}
+
+// 更新答复点赞
+const updateReplyLikeUrl = '/pain_reply/like'
+export const updateReplyLikeAction = (id: string, status: number): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: updateReplyLikeUrl,
+    method: 'PUT',
+	data: {
+		id,
+		status
+	}
+  })
+}
+
+// 创建评论
+const createCommentUrl = '/pain_comment'
+export const createCommentAction = (comment: Record<string,any>): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: createCommentUrl,
+    method: 'POST',
+	data: comment
+  })
+}
+
+// 更新答复点赞
+const updateCommentLikeUrl = '/pain_comment/like'
+export const updateCommentLikeAction = (id: string, status: number): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: updateCommentLikeUrl,
+    method: 'PUT',
+	data: {
+		id,
+		status
+	}
+  })
+}
