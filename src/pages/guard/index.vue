@@ -40,17 +40,10 @@
 			}
 		},
 		onLoad(option) {
-			if(!option.notAuth){
-				if(uni.getStorageSync('SYS_AUTH_TOKEN_KEY')){
-					uni.switchTab({
-						url: "/pages/index/index"
-					})
-				}
-				setTimeout(() => {
-					plus.navigator.closeSplashscreen();
-				}, 500)
-			}
-			
+			uni.removeStorageSync('SYS_INFO')
+			uni.removeStorageSync('SYS_USER_INFO')
+			uni.removeStorageSync('SYS_AUTH_TOKEN_KEY')
+			uni.removeStorageSync('SYS_SWITCH_TYPE')
 		},
 		methods: {
 			open() {

@@ -43,7 +43,13 @@
 					
 			        // 本地缓存
 			        console.log('barHeight',barHeight)
-					that.$store.commit('setGlobalHeight', barHeight)
+					if(!uni.getStorageSync('SYS_AUTH_TOKEN_KEY')){
+						console.log('if=====================')
+						that.$store.dispatch('setAuthStatus', false)
+					}
+					setTimeout(() => {
+						plus.navigator.closeSplashscreen();
+					}, 2000)
 			    },
 				fail(e){
 					console.log('faile ------')
@@ -82,11 +88,6 @@
     };
 </script>
 
-<style lang="scss">
-/* 注意要写在第一行，同时给style标签加入lang="scss"属性 */
-@import "uview-ui/index.scss";
-</style>
-
 <style>
-    /*每个页面公共css */
+
 </style>

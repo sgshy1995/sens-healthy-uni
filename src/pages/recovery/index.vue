@@ -1,18 +1,31 @@
 <template>
 	<view class="index-wrapper-outer">
 		<view class="index-wrapper" :class="{hiden: visible}">
-			<u-navbar placeholder title="" leftIconSize="28" border bgColor="#fff">
-				<view slot="left"></view>
-				<view slot="center" v-if="!ifSticky">
-					<u-tabs :current="current" @change="changeTabs" :list="listTitle" :itemStyle="itemStyle" lineColor="#4F68B0"></u-tabs>
-				</view>
-				<view slot="right" class="right" v-if="!ifSticky">
-					<view class="right-item" @click="handleShowTips">
-						<image class="add-icon" src="@/static/images/recovery/tips.png"></image>
+			<view class="index-nav" placeholder title="" leftIconSize="28" border bgColor="#fff">
+				<u-status-bar></u-status-bar>
+				<view class="index-nav-in">
+					<view class="index-nav-in-left"></view>
+					<view class="index-nav-in-center">
+						<view class="index-nav-tabs">
+							<view class="index-nav-tabs__item" @click="changeTabs(index)" v-for="(u,index) in listTitle" :key="index" :class="{active: current === index}">
+								<text>{{ u.name }}</text>
+								<view class="index-nav-tabs__item__live" v-if="index === 1">
+									<image src="@/static/images/live-white.png" class="index-nav-tabs__item__live__image"></image>
+									<text class="index-nav-tabs__item__live__text">Live</text>
+								</view>
+							</view>
+							<view class="index-nav-tabs__line" :class="{right: current === 1}"></view>
+						</view>
+					</view>
+					<view class="index-nav-in-right">
+						<view class="right-item" @click="handleShowTips">
+							<image class="add-icon" src="@/static/images/recovery/tips.png"></image>
+						</view>
 					</view>
 				</view>
-			</u-navbar>
-			<Prescription :ifSticky="ifSticky" @hide="handleHidePrescription" @show="handleShowPrescription" v-show="current === 0"></Prescription>
+				
+			</view>
+			<Prescription @hide="handleHidePrescription" @show="handleShowPrescription" v-show="current === 0"></Prescription>
 		</view>
 	</view>
 	
@@ -38,10 +51,8 @@
 						name: '智能处方',
 					},
 					{
-						name: '康复评估'
-					},
-					{
-						name: '专业指导'
+						name: '专业指导',
+						showCustom: true
 					}
 				],
 				menuBaseUrl: 'https://cdn.uviewui.com/uview/menu/',
@@ -54,15 +65,12 @@
 			showCamera(){
 				
 			},
-			changeTabs(info){
-				console.log('info', info)
-				this.current = info.index
+			changeTabs(index){
+				this.current = index
 			},
 			handleShowTips() {
 				const that = this
-				uni.navigateTo({
-					url: "/pages_index/painQAPublish"
-				})
+				
 			},
 			handleShowPrescription(){
 				console.log('显示弹窗')
@@ -90,15 +98,106 @@
 		height: 100%;
 		box-sizing: border-box;
 		position: relative;
+		display: flex;
+		flex-direction: column;
 		
-		.right{
+		.index-nav{
+			width: 100%;
+			box-sizing: border-box;
+			border-bottom: 1px solid #ddd;
+			
+			.index-nav-in{
+				width: 100%;
+				height: 84rpx;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				box-sizing: border-box;
+				padding: 0 24rpx;
+				
+				.index-nav-in-center{
+					flex-grow: 1;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					
+					.index-nav-tabs{
+						width: 280rpx;
+						display: flex;
+						align-items: center;
+						position: relative;
+						box-sizing: border-box;
+						padding-bottom: 8rpx;
+						
+						&__item{
+							width: 50%;
+							box-sizing: border-box;
+							font-size: 14px;
+							font-weight: 800;
+							color: #666;
+							transition: all 0.3s;
+							display: flex;
+							align-items: center;
+							justify-content: center;
+							white-space: nowrap;
+							position: relative;
+							
+							&.active{
+								color: #333;
+							}
+							
+							&__live{
+								position: absolute;
+								bottom: 50%;
+								left: 80%;
+								box-sizing: border-box;
+								background: rgba(224,108,117,0.7);
+								padding: 2rpx 6rpx;
+								display: flex;
+								align-items: center;
+								border-radius: 10rpx;
+								
+								&__image{
+									width: 28rpx;
+									height: 28rpx;
+									margin-right: 4rpx;
+								}
+								
+								&__text{
+									font-size: 10px;
+									font-weight: bold;
+									color: #fff;
+								}
+							}
+						}
+						
+						&__line{
+							height: 6rpx;
+							border-radius: 4rpx;
+							width: 60rpx;
+							position: absolute;
+							top: 100%;
+							left: 40rpx;
+							background: #4F68B0;
+							transition: all 0.3s;
+							
+							&.right{
+								left: 180rpx;
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		.index-nav-in-right, .index-nav-in-left{
 			display: flex;
 			align-items: center;
+			width: 32rpx;
 		}
 		
 		.right-item{
 			flex-shrink: 0;
-			margin-left: 40rpx;
 			display: flex;
 			align-items: center;
 			justify-content: center;
@@ -113,8 +212,8 @@
 		}
 		
 		.add-icon{
-			width: 18px;
-			height: 18px;
+			width: 32rpx;
+			height: 32rpx;
 		}
 	}
 	

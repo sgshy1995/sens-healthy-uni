@@ -1,6 +1,16 @@
 {
 	"pages": [
 		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false,
+				"app-plus" : {
+					"bounce" : "none" // 取消APP端iOS回弹,避免与下拉刷新冲突 (可统一配在 'globalStyle')
+				}
+			}
+		},
+		{
 		    "path" : "pages/guard/agreement-of-usage",
 		    "style" :                                                                                    
 		    {
@@ -19,17 +29,13 @@
 		    
 		},
 		{
-			"path": "pages/index/index",
-			"style": {
-				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false
-			}
-		},
-		{
 			"path": "pages/recovery/index",
 			"style": {
 				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false
+				"enablePullDownRefresh": false,
+				"app-plus" : {
+					"bounce" : "none" // 取消APP端iOS回弹,避免与下拉刷新冲突 (可统一配在 'globalStyle')
+				}
 			}
 		},
 		{
@@ -100,9 +106,34 @@
 		    }
 		    
 		}
+		,{
+		    "path" : "pages_recovery/prescription-detail",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "",
+		        "enablePullDownRefresh": false,
+		        "app-plus" : {
+		        	"bounce" : "none" // 取消APP端iOS回弹,避免与下拉刷新冲突 (可统一配在 'globalStyle')
+		        }
+		    }
+		    
+		}
+		,{
+		    "path" : "pages_recovery/prescription-detail-nvue",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "",
+		        "enablePullDownRefresh": false,
+		        "app-plus" : {
+		        	"bounce" : "none" // 取消APP端iOS回弹,避免与下拉刷新冲突 (可统一配在 'globalStyle')
+		        }
+		    }
+		    
+		}
     ],
 	"globalStyle": {
 		"navigationStyle":"custom",
+		"pageOrientation": "auto",
 		"app-plus":{
 			"titleView":false,
 			"safearea": {
@@ -111,7 +142,8 @@
 			    }   
 			},
 			"bounce": "none",
-			"scrollIndicator":"none"
+			"scrollIndicator":"none",
+			"pageOrientation": "auto"
 		}
 	},
 	"condition" : { //模式配置，仅开发期间生效
@@ -119,7 +151,7 @@
 		"list": [
 			{
 				"name": "index", //模式名称
-				"path": "pages/guard/index", //启动页面，必选
+				"path": "pages/index/index", //启动页面，必选
 				"query": "" //启动参数，在页面的onLoad函数里面得到
 			}
 		]

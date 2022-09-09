@@ -98,6 +98,10 @@
 			}
 		},
 		onShow() {
+			if (uni.getStorageSync('SYS_AUTH_TOKEN_KEY')) {
+				this.$store.dispatch('getUserInfo')
+				this.$store.dispatch('getInfo')
+			}
 			this.$nextTick(()=>{
 				if(this.$refs.PainQA){
 					this.$refs.PainQA.getQuestionsList()
@@ -161,6 +165,7 @@
 		box-sizing: border-box;
 		position: relative;
 		background: #fff;
+		overflow: hidden;
 		
 		.index-wrapper-in{
 			width: 100%;

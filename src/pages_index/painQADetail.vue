@@ -386,6 +386,7 @@
 		box-sizing: border-box;
 		border-top: 1px solid #eee;
 		width: 100%;
+		z-index: 99;
 		
 		.action-bottom-in{
 			width: 100%;

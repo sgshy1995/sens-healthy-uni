@@ -1,0 +1,88 @@
+<template>
+	<div class="prescription-detail" :style="{height: `${height}px`,width: `${width}px`}">
+		<div class="prescription-detail__top" :style="{width: `${width}px`}">
+			<video :poster="baseUrl + info.cover" id="myVideo" class="prescription-detail__top__video" :style="{width: `${width}px`}"
+				src="https://bjetxgzv.cdn.bspapp.com/VKCEYUGU-uni-app-doc/360e4b20-4f4b-11eb-8a36-ebb87efcf8c0.mp4"
+				@error="videoErrorCallback" :danmu-list="danmuList" enable-danmu
+				danmu-btn controls>
+			</video>
+			<!-- <web-view ref="webview" style="width: 750rpx;height: 400rpx;" src="/hybrid/html/index.html" :webview-styles="{width: '750rpx', height: '400rpx'}"></web-view> -->
+		</div>
+		<div class="prescription-detail__middle" :style="{width: `${width}px`}">
+			<u--button @click="evalJs">传递</u--button>
+		</div>
+	</div>
+</template>
+
+<script>
+	export default {
+		data(){
+			return {
+				id: '',
+				info: {},
+				videoContext: null,
+				danmuList: [],
+				baseUrl: process.env.VUE_APP_API_BASE_URL + '/',
+				height: 0
+			}
+		},
+		onLoad() {
+			const that = this
+			// #ifdef APP-NVUE
+			const eventChannel = this.$scope.eventChannel; // 兼容APP-NVUE
+			// #endif
+			// #ifndef APP-NVUE
+			const eventChannel = this.getOpenerEventChannel();
+			// #endif
+			eventChannel.on('show', function(data) {
+				console.log(data)
+				if (data.record) that.id = data.record.id
+				that.$nextTick(() => {
+					that.videoContext = uni.createVideoContext('myVideo')
+				})
+			})
+			this.height = uni.getSystemInfoSync().windowHeight;
+			this.width = uni.getSystemInfoSync().windowWidth;
+		},
+		methods: {
+			videoErrorCallback(e) {
+				uni.showModal({
+					content: e.target.errMsg,
+					showCancel: false
+				})
+			},
+			fullscreenchange(event) {
+				console.log('event', event)
+				if (event.detail && event.detail.direction === 'vertical') {
+					//this.videoContext.requestFullScreen({ direction: 0 })
+					//this.videoContext.exitFullScreen()
+					plus.screen.lockOrientation("portrait-primary");
+					console.log('lock')
+				}else{
+					plus.screen.unlockOrientation()
+					console.log('unlock')
+				}
+			},
+			// 调用 webview 内部逻辑
+			evalJs() {
+				this.$refs.webview.evalJs("document.body.style.background ='#00FF00'");
+			}
+		}
+	}
+</script>
+
+<style>
+	.prescription-detail{
+		background: yellowgreen;
+	}
+	
+	.prescription-detail .prescription-detail__top{
+		height: 400rpx;
+		background: pink;
+	}
+	
+	.prescription-detail .prescription-detail__top .prescription-detail__top__video{
+		height: 400rpx;
+		background: darkcyan;
+	}
+</style>

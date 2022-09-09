@@ -291,3 +291,31 @@ export const updateCommentLikeAction = (id: string, status: number): Promise<Rec
 	}
   })
 }
+
+// 处方列表获取
+const getPrescriptionUrl = '/prescription/custom'
+export const getPrescriptionAction = (prescription: Record<string,any>): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: getPrescriptionUrl,
+    method: 'GET',
+	data: prescription
+  })
+}
+
+// 处方根据id获取
+const getPrescriptionByIdUrl = (id:string)=>`/prescription/${id}`
+export const getPrescriptionByIdAction = (id: string): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: getPrescriptionByIdUrl(id),
+    method: 'GET'
+  })
+}
+
+// 处方根据id增加观看人数
+const addPrescriptionWatchNumUrl = (id:string)=>`/prescription/watch/${id}`
+export const addPrescriptionWatchNumAction = (id: string): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: addPrescriptionWatchNumUrl(id),
+    method: 'POST'
+  })
+}

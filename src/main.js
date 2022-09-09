@@ -1,6 +1,9 @@
 import Vue from 'vue'
 import App from './App.vue'
 
+import SAlbum from '@/components/album/s-album.vue'
+Vue.component('s-album',SAlbum)
+
 import uView from "uview-ui";
 Vue.use(uView);
 
