@@ -79,7 +79,7 @@
 		box-sizing: border-box;
 		position: relative;
 		background: #fff;
-		
+		overflow: hidden;
 		
 	}
 

@@ -319,3 +319,60 @@ export const addPrescriptionWatchNumAction = (id: string): Promise<Record<string
     method: 'POST'
   })
 }
+
+
+// 视频课程列表获取
+const getVideoCourseUrl = '/video_course/custom'
+export const getVideoCourseAction = (videoCourse: Record<string,any>): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: getVideoCourseUrl,
+    method: 'GET',
+	data: videoCourse
+  })
+}
+
+// 视频课程根据id获取
+const getVideoCourseByIdUrl = (id:string)=>`/video_course/${id}`
+export const getVideoCourseByIdAction = (id: string): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: getVideoCourseByIdUrl(id),
+    method: 'GET'
+  })
+}
+
+// 热门轮播课程列表获取
+const getCarouselCoursesUrl = '/video_course/carousel'
+export const getCarouselCoursesAction = (): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: getCarouselCoursesUrl,
+    method: 'GET'
+  })
+}
+
+// 根据视频课程id获取视频列表
+const getCourseInVideosByCourseIdUrl = (course_id:string)=>`/course_in_video/course/${course_id}`
+export const getCourseInVideosByCourseIdAction = (course_id: string): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: getCourseInVideosByCourseIdUrl(course_id),
+    method: 'GET'
+  })
+}
+
+// 直播课程列表获取
+const getLiveCourseUrl = '/live_course/custom'
+export const getLiveCourseAction = (liveCourse: Record<string,any>): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: getLiveCourseUrl,
+    method: 'GET',
+	data: liveCourse
+  })
+}
+
+// 直播课程根据id获取
+const getLiveCourseByIdUrl = (id:string)=>`/live_course/${id}`
+export const getLiveCourseByIdAction = (id: string): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: getLiveCourseByIdUrl(id),
+    method: 'GET'
+  })
+}

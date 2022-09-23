@@ -180,7 +180,7 @@
 		watch: {
 			dataSource: {
 				handler(){
-					console.log('dataSource change', this.dataSource)
+					//console.log('dataSource change', this.dataSource)
 				},
 				deep: true,
 				immediate: true

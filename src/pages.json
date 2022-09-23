@@ -129,6 +129,17 @@
 		        }
 		    }
 		    
+		},
+		{
+		    "path" : "pages_store/course-detail",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "",
+		        "enablePullDownRefresh": false,
+		        "app-plus" : {
+		        	"bounce" : "none" // 取消APP端iOS回弹,避免与下拉刷新冲突 (可统一配在 'globalStyle')
+		        }
+		    }
 		}
     ],
 	"globalStyle": {
