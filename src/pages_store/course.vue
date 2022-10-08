@@ -1,17 +1,5 @@
 <template>
 	<view class="course-wrapper">
-		<view class="course-top">
-			<view class="course-top-left" @click="handleChangeType('equipment')">
-				<image class="course-top-left-icon" src="@/static/images/store/switch.png"></image>
-				<text class="course-top-left-text">器材</text>
-			</view>
-			<view class="course-top-center">
-				课程商城
-			</view>
-			<view class="course-top-right">
-				zhanwei
-			</view>
-		</view>
 		<view class="course-search" v-if="!classes">
 			<u-search v-model="keyword" @search="handleSearch" @clear="handleClearSearch" shape="square" :show-action="false"></u-search>
 			<view class="course-search-icon" @click.stop="handleShowSelect">
@@ -33,20 +21,20 @@
 		<view class="course-recommend" v-if="shufflingList.length" v-show="!classes && !keywordIn">
 			<view class="course-recommend-body">
 				<u-swiper :height="160" :list="shufflingList" previousMargin="30" nextMargin="30" circular :autoplay="true"
-					radius="5" :interval="5000" indicatorActiveColor="#4F68B0" bgColor="#ffffff"></u-swiper>
+					radius="5" :interval="5000" indicatorActiveColor="#4F68B0" bgColor="#ffffff" @click="handleClickSwiper"></u-swiper>
 			</view>
 		</view>
 		<view class="course-type">
 			<view class="course-type-body">
-				<view class="course-type-item" @click="handleChangeCourseType('cf')" :class="{active: showType === 'cf'}">
-					<image src="@/static/images/store/cf-white.png" class="course-type-item-img" v-if="showType === 'cf'"></image>
-					<image src="@/static/images/store/cf.png" class="course-type-item-img" v-else></image>
-					<text class="course-type-item-text">处方课</text>
-				</view>
 				<view class="course-type-item" @click="handleChangeCourseType('live')" :class="{active: showType === 'live'}">
 					<image src="@/static/images/store/live-white.png" class="course-type-item-img" v-if="showType === 'live'"></image>
 					<image src="@/static/images/store/live.png" class="course-type-item-img" v-else></image>
-					<text class="course-type-item-text">直播课</text>
+					<text class="course-type-item-text">面对面康复指导</text>
+				</view>
+				<view class="course-type-item" @click="handleChangeCourseType('cf')" :class="{active: showType === 'cf'}">
+					<image src="@/static/images/store/cf-white.png" class="course-type-item-img" v-if="showType === 'cf'"></image>
+					<image src="@/static/images/store/cf.png" class="course-type-item-img" v-else></image>
+					<text class="course-type-item-text">专业能力提升</text>
 				</view>
 			</view>
 		</view>
@@ -74,7 +62,7 @@
 							<view class="course-all-item-right">
 								<view class="item-right-tag">
 									<text class="item-right-tag-in">
-										<text class="tag-in-text">处方视频课</text>
+										<text class="tag-in-text">专业能力提升</text>
 										<text class="tag-in-point">·</text>
 									</text>
 									<text class="item-right-tag-in" >
@@ -127,7 +115,7 @@
 							<view class="course-all-item-right">
 								<view class="item-right-tag">
 									<text class="item-right-tag-in">
-										<text class="tag-in-text">直播课</text>
+										<text class="tag-in-text">面对面康复指导</text>
 										<text class="tag-in-point">·</text>
 									</text>
 									<text class="item-right-tag-in" >
@@ -156,6 +144,13 @@
 				</mescroll-uni>
 			</view>
 		</view>
+		<view class="shopping-cart" @click="handleShowChart">
+			<u-icon name="shopping-cart-fill" color="#fff" size="26"></u-icon>
+			<view class="badge-box" :class="{'less99': courseCharts <= 99 && courseCharts >= 10, 'less10': courseCharts <10}"
+				v-if="courseCharts">
+				<u-badge numberType="overflow" type="error" max="99" :value="courseCharts"></u-badge>
+			</view>
+		</view>
 		<view class="data-picker-wrapper">
 			<uni-data-picker :key="refreshKey" :itemsList="itemsList" ref="picker" placeholder="请选择分类" preload
 				popup-title="请选择分类" :localdata="dataTree" v-model="classes" @change="onchange" @nodeclick="onnodeclick"
@@ -174,7 +169,7 @@
 	export default {
 		data() {
 			return {
-				showType: 'cf',
+				showType: 'live',
 				shufflingList: [],
 				baseUrl: process.env.VUE_APP_API_BASE_URL + '/',
 				recommendList: [],
@@ -233,6 +228,12 @@
 				keywordIn: ''
 			}
 		},
+		props: {
+			courseCharts: {
+				type: Number,
+				default: 0
+			}
+		},
 		mounted(){
 			this.getCarouselData()
 			this.$loadingOn();
@@ -244,6 +245,21 @@
 			})
 		},
 		methods: {
+			handleShowChart(){
+				const that = this
+				uni.navigateTo({
+					url: "/pages_store/chart",
+					success: function(res) {
+						// 通过eventChannel向被打开页面传送数据
+						res.eventChannel.emit('show', {
+							showType: 'course'
+						})
+					}
+				})
+			},
+			handleClickSwiper(index){
+				this.handleShowDetail(this.shufflingList[index], this.shufflingList[index].video_num ? 'video' : 'live')
+			},
 			handleShowDetail(record, type) {
 				const that = this
 				uni.navigateTo({
@@ -585,6 +601,34 @@
 			height: 0;
 			overflow: hidden;
 		}
+		
+		.shopping-cart {
+			position: fixed;
+			right: 24rpx;
+			bottom: 190rpx;
+			width: 80rpx;
+			height: 80rpx;
+			background: #4F68B0;
+			box-shadow: rgba(79, 104, 176, 0.3) 0px 14px 24px, rgba(79, 104, 176, 0.22) 0px 9px 8px;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		
+			.badge-box {
+				position: absolute;
+				right: -16rpx;
+				top: 6rpx;
+		
+				&.less99 {
+					right: -4rpx;
+				}
+		
+				&.less10 {
+					right: 8rpx;
+				}
+			}
+		}
 
 		.course-top {
 			width: 100%;
@@ -602,13 +646,13 @@
 				display: flex;
 				align-items: center;
 				justify-content: center;
-				border: 2px solid #4F68B0;
+				border: 2px solid #969696;
 				border-radius: 16rpx;
 				flex-direction: column;
 
 				.course-top-left-icon {
-					width: 24rpx;
-					height: 24rpx;
+					width: 36rpx;
+					height: 36rpx;
 					margin-bottom: 6rpx;
 				}
 

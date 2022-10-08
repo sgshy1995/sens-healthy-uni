@@ -376,3 +376,134 @@ export const getLiveCourseByIdAction = (id: string): Promise<Record<string,any>>
     method: 'GET'
   })
 }
+
+// 器材列表获取
+const getEquipmentsUrl = '/equipment/custom'
+export const getEquipmentsAction = (equipment: Record<string,any>): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: getEquipmentsUrl,
+    method: 'GET',
+	data: equipment
+  })
+}
+
+// 器材根据id获取
+const getEquipmentByIdUrl = (id:string)=>`/equipment/${id}`
+export const getEquipmentByIdAction = (id: string): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: getEquipmentByIdUrl(id),
+    method: 'GET'
+  })
+}
+
+// 根据器材id获取型号列表
+const getModelsByEquipmentIdUrl = (equipment_id:string)=>`/equipment_model/equipment/${equipment_id}`
+export const getModelsByEquipmentIdAction = (equipment_id: string): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: getModelsByEquipmentIdUrl(equipment_id),
+    method: 'GET'
+  })
+}
+
+// 轮播器材列表获取
+const getCarouselEquipmentsUrl = '/equipment/carousel'
+export const getCarouselEquipmentsAction = (): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: getCarouselEquipmentsUrl,
+    method: 'GET'
+  })
+}
+
+// 加入课程购物车
+const createCourseChartUrl = '/course_chart'
+export const createCourseChartAction = (courseChart: Record<string,any>): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: createCourseChartUrl,
+    method: 'POST',
+	data: courseChart
+  })
+}
+
+// 课程购物车列表获取
+const getCourseChartListUrl = '/course_chart'
+export const getCourseChartListAction = (): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: getCourseChartListUrl,
+    method: 'GET'
+  })
+}
+
+// 根据课程购物车id删除
+const deleteCourseChartByIdUrl = (course_chart_id:string)=>`/course_chart/${course_chart_id}`
+export const deleteCourseChartByIdAction = (course_chart_id: string): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: deleteCourseChartByIdUrl(course_chart_id),
+    method: 'DELETE'
+  })
+}
+
+// 清空用户的课程购物车
+const deleteCourseChartsByUserUrl = '/course_chart'
+export const deleteCourseChartsByUserAction = (): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: deleteCourseChartsByUserUrl,
+    method: 'DELETE'
+  })
+}
+
+// 加入器材购物车
+const createEquipmentChartUrl = '/equipment_chart'
+export const createEquipmentChartAction = (equipmentChart: Record<string,any>): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: createEquipmentChartUrl,
+    method: 'POST',
+	data: equipmentChart
+  })
+}
+
+// 器材购物车列表获取
+const getEquipmentChartListUrl = '/equipment_chart'
+export const getEquipmentChartListAction = (): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: getEquipmentChartListUrl,
+    method: 'GET'
+  })
+}
+
+// 根据器材购物车id删除
+const deleteEquipmentChartByIdUrl = (equipment_chart_id:string)=>`/equipment_chart/${equipment_chart_id}`
+export const deleteEquipmentChartByIdAction = (equipment_chart_id: string): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: deleteEquipmentChartByIdUrl(equipment_chart_id),
+    method: 'DELETE'
+  })
+}
+
+// 根据器材购物车的多个id删除
+const deleteEquipmentChartByIdsUrl = '/equipment_chart/ids/delete'
+export const deleteEquipmentChartByIdsAction = (ids: string[]): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: deleteEquipmentChartByIdsUrl,
+    method: 'DELETE',
+	data: ids
+  })
+}
+
+// 清空用户的器材购物车
+const deleteEquipmentChartsByUserUrl = '/equipment_chart/user/delete'
+export const deleteEquipmentChartsByUserAction = (): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: deleteEquipmentChartsByUserUrl,
+    method: 'DELETE'
+  })
+}
+
+// 更新器材购物车型号数量
+const updateEquipmentChartAddNumUrl = '/equipment_chart/num'
+export const updateEquipmentChartAddNumAction = (id: string, type: "reduce" | "add"): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: updateEquipmentChartAddNumUrl,
+    method: 'PUT',
+	data: {id, type}
+  })
+}

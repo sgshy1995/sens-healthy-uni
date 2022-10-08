@@ -16,7 +16,7 @@
 			<view class="course-detail-title">{{ info.title }}</view>
 			<view class="course-detail-tags">
 				<text class="item-right-tag-in">
-					<text class="tag-in-text">{{ show_type === 'video' ? '处方视频课' : '直播课' }}</text>
+					<text class="tag-in-text">{{ show_type === 'video' ? '专业能力提升' : '面对面康复指导' }}</text>
 					<text class="tag-in-point">·</text>
 				</text>
 				<text class="item-right-tag-in" >
@@ -80,7 +80,7 @@
 		</scroll-view>
 		<view class="course-detail-footer" v-if="info.id">
 			<view class="course-detail-footer-in">
-				<view class="course-detail-footer-left">
+				<view class="course-detail-footer-left" @click="handleAddChart">
 					<u-icon name="shopping-cart-fill" color="#4F68B0" size="20"></u-icon>
 					<text class="course-detail-footer-left-text">加入购物车</text>
 				</view>
@@ -102,7 +102,8 @@
 	import {
 		getVideoCourseByIdAction,
 		getLiveCourseByIdAction,
-		getCourseInVideosByCourseIdAction
+		getCourseInVideosByCourseIdAction,
+		createCourseChartAction
 	} from '@/service/service'
 	import SShowMore from '@/components/show-more/s-show-more'
 	export default {
@@ -143,6 +144,18 @@
 			})
 		},
 		methods: {
+			handleAddChart(){
+				this.$loadingOn()
+				createCourseChartAction({
+					course_id: this.info.id,
+					add_course_type: this.show_type === 'live' ? 1 : 0
+				}).then(res=>{
+					this.$loadingOff()
+					this.$toast('已加入购物车~')
+				}).catch(err=>{
+					this.$loadingOff()
+				})
+			},
 			getLiveDetailInfo() {
 				getLiveCourseByIdAction(this.id).then(res => {
 					this.info = {

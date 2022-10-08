@@ -37,12 +37,12 @@
 				</view>
 				<view class="mine-top-in-buttons">
 					<view class="mine-top-in-button">
-						<u-icon name="man-add-fill" color="rgba(123, 121, 255, 1)" size="18"></u-icon>
+						<u-icon name="man-add-fill" color="rgba(79,104,176, 1)" size="18"></u-icon>
 						<text class="mine-top-in-button-text text-left">0</text>
 						<text class="mine-top-in-button-text">关注</text>
 					</view>
 					<view class="mine-top-in-button button-right">
-						<u-icon name="star-fill" color="rgba(123, 121, 255, 1)" size="18"></u-icon>
+						<u-icon name="star-fill" color="rgba(79,104,176, 1)" size="18"></u-icon>
 						<text class="mine-top-in-button-text text-left">0</text>
 						<text class="mine-top-in-button-text">点赞</text>
 					</view>
@@ -58,7 +58,7 @@
 							0
 						</view>
 						<view class="mine-top-out-item-bottom">
-							余额
+							积分
 						</view>
 					</view>
 					<view class="mine-top-out-info-item">
@@ -66,7 +66,7 @@
 							0
 						</view>
 						<view class="mine-top-out-item-bottom">
-							积分
+							新消息
 						</view>
 					</view>
 					<view class="mine-top-out-info-item item-last">
@@ -74,9 +74,10 @@
 							0
 						</view>
 						<view class="mine-top-out-item-bottom">
-							新消息
+							余额
 						</view>
 					</view>
+					<view class="mine-top-out-info-add">充值</view>
 				</view>
 				<view class="mine-top-out-record" v-if="showRecord">
 					<view class="mine-info-record-body">
@@ -140,10 +141,10 @@
 					</view>
 				</view>
 				<view class="mine-top-out-show" @click="handleShowRecord">
-					<u-badge :show="!info.injury_history" :isDot="true" type="success" bgColor="#767CFA"></u-badge>
+					<u-badge :show="!info.injury_history" :isDot="true" type="success" bgColor="#4F68B0"></u-badge>
 					<text class="mine-top-out-show-text" :class="{empty: !info.injury_history}">我的伤痛档案</text>
-					<u-icon name="arrow-down" v-if="!showRecord" color="#817EBA" size="16"></u-icon>
-					<u-icon name="arrow-up" v-if="showRecord" color="#817EBA" size="16"></u-icon>
+					<u-icon name="arrow-down" v-if="!showRecord" color="#4F68B0" size="16"></u-icon>
+					<u-icon name="arrow-up" v-if="showRecord" color="#4F68B0" size="16"></u-icon>
 				</view>
 			</view>
 		</view>
@@ -415,7 +416,8 @@
 						height: 64rpx;
 						border-radius: 50%;
 						margin-left: 32rpx;
-						background: rgba(123, 121, 255, 1);
+						//background: rgba(123, 121, 255, 1);
+						background: #4F68B0;
 						display: flex;
 						align-items: center;
 						justify-content: center;
@@ -490,13 +492,13 @@
 						align-items: center;
 						justify-content: center;
 						border-radius: 24rpx;
-						border: 1px solid rgba(123, 121, 255, 1);
+						border: 1px solid #4F68B0;
 						box-sizing: border-box;
 						box-shadow: rgba(79,104,176, 0.3) 0px 14px 24px, rgba(79,104,176, 0.22) 0px 9px 8px;
 						
 						.mine-top-in-button-text{
 							padding-left: 2rpx;
-							color: rgba(123, 121, 255, 1);
+							color: #4F68B0;
 							font-size: 13px;
 							font-weight: 800;
 							
@@ -537,6 +539,7 @@
 					align-items: center;
 					justify-content: center;
 					box-sizing: border-box;
+					position: relative;
 					
 					.mine-top-out-info-item{
 						display: flex;
@@ -550,7 +553,7 @@
 						}
 						
 						.mine-top-out-item-top{
-							color: rgba(123, 121, 255, 1);
+							color: #4F68B0;
 							font-weight: 800;
 							font-size: 16px;
 							margin-bottom: 6rpx;
@@ -560,6 +563,22 @@
 							color: #BABABA;
 							font-size: 13px;
 						}
+					}
+					
+					.mine-top-out-info-add{
+						position: absolute;
+						top: 50%;
+						right: 36rpx;
+						transform: translateY(-50%);
+						box-sizing: border-box;
+						padding: 2rpx 8rpx;
+						display: flex;
+						align-items: center;
+						border: 1px solid #4F68B0;
+						border-radius: 12rpx;
+						background: #4F68B0;
+						font-size: 12px;
+						color: #fff;
 					}
 				}
 				
@@ -641,7 +660,7 @@
 								padding: 6rpx 12rpx;
 								display: flex;
 								align-items: center;
-								border: 1px solid #717FF5;
+								border: 1px solid #4F68B0;
 								border-radius: 12rpx;
 								
 								.record-body-empty-in-img{
@@ -651,7 +670,7 @@
 								
 								.record-body-empty-in-text{
 									font-size: 13px;
-									color: #717FF5;
+									color: #4F68B0;
 								}
 							}
 						}
