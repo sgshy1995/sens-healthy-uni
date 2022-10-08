@@ -71,9 +71,10 @@
 			},
 			handleOk(){
 				this.close()
-				uni.switchTab({
-					url: "/pages/index/index"
-				})
+				this.$emit('close')
+				/* uni.switchTab({
+					url: "/pages/index/index?ready=1"
+				}) */
 			},
 			handleShowAgreement(){
 				uni.navigateTo({

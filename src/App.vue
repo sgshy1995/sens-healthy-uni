@@ -74,7 +74,7 @@
 			}
 		},
 		watch: {
-			authStatus(){
+			/* authStatus(){
 				if(!this.authStatus){
 					console.log('==================== relaunch ==================')
 					setTimeout(()=>{
@@ -83,6 +83,16 @@
 						})
 					},1000)
 				}
+			}, */
+			authStatus:{
+				handler(){
+					if(!this.authStatus){
+						uni.hideTabBar()
+					}else{
+						uni.showTabBar()
+					}
+				},
+				immediate: true
 			}
 		}
     };

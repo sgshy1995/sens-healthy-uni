@@ -565,7 +565,6 @@
 						item.url = this.baseUrl + item.cover
 					})
 					this.shufflingList = [...shufflingList]
-					console.log('this.shufflingList', this.shufflingList)
 				})
 			},
 		}

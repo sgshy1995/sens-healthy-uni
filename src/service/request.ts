@@ -59,9 +59,9 @@ export const doRequestAction = (requestBase: RequestBase): Promise<any> => {
 				uni.showToast({title: res.data.message || '请重新登录',icon:'none'})
 				// @ts-ignore
 				store.dispatch('setAuthStatus', false)
-				uni.reLaunch({
+				/* uni.reLaunch({
 					url: "/pages/guard/index?notAuth=1"
-				})
+				}) */
 				reject(res.message)
 			}else if (res && res.data && res.statusCode >= 200 && res.statusCode < 300) { //服务器请求的，就处理
 			   resolve(res.data)
@@ -75,9 +75,9 @@ export const doRequestAction = (requestBase: RequestBase): Promise<any> => {
 			if (err && (err.statusCode === 401 || err.statusCode === 403)) {
 				// @ts-ignore
 				store.dispatch('setAuthStatus', false)
-				uni.reLaunch({
+				/* uni.reLaunch({
 					url: "/pages/guard/index?notAuth=1"
-				})
+				}) */
 			}
 	      uni.showToast({title: (err.data && err.data.message) || '请求失败',icon:'none'})
 	      reject(err)

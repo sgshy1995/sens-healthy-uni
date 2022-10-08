@@ -1,5 +1,5 @@
 <template>
-	<view class="index-wrapper">
+	<view class="index-wrapper" v-if="authStatus">
 		<u-status-bar></u-status-bar>
 		<view class="index-wrapper-in">
 			<view class="index-top">
@@ -55,15 +55,18 @@
 		<PainQA ref="PainQA" v-show="switchType === 0"></PainQA>
 		<RehabilitationInformation v-show="switchType === 1"></RehabilitationInformation>
 	</view>
+	<guard v-else @close="handleSuccess"></guard>
 </template>
 
 <script>
 	import PainQA from '@/pages_index/painQA.vue'
 	import RehabilitationInformation from '@/pages_index/rehabilitationInformation.vue'
+	import Guard from '@/pages/guard/index.vue'
 	export default {
 		components: {
 			PainQA,
-			RehabilitationInformation
+			RehabilitationInformation,
+			Guard
 		},
 		data() {
 			return {
@@ -89,13 +92,22 @@
 				current: 0,
 				message: 998,
 				avatarDefault: require('@/static/images/avatar-default.png'),
-				baseUrl: process.env.VUE_APP_API_BASE_URL + '/'
+				baseUrl: process.env.VUE_APP_API_BASE_URL + '/',
+				in_login_register: false
 			}
 		},
 		computed: {
 			userInfo(){
 				return this.$store.state.user.userInfo
+			},
+			authStatus(){
+				return this.$store.state.auth.authStatus
 			}
+		},
+		onLoad(option){
+			uni.switchTab({
+				url: '/pages/recovery/index'
+			});
 		},
 		onShow() {
 			if (uni.getStorageSync('SYS_AUTH_TOKEN_KEY')) {
@@ -108,7 +120,22 @@
 				}
 			})
 		},
+		watch: {
+			authStatus:{
+				handler(){
+					if(!this.authStatus){
+						uni.hideTabBar()
+					}else{
+						uni.showTabBar()
+					}
+				},
+				immediate: true
+			}
+		},
 		methods: {
+			handleSuccess(){
+				this.$store.dispatch('setAuthStatus', true)
+			},
 			handleChangeSwitch(){
 				this.switchType = this.switchType === 0 ? 1 : 0
 				this.$nextTick(()=>{

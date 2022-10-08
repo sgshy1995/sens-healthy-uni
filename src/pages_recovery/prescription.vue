@@ -362,7 +362,6 @@
 		width: 100%;
 		flex-grow: 1;
 		overflow: hidden;
-		padding-top: 24rpx;
 		background: #fff;
 		box-sizing: border-box;
 		padding-bottom: 10rpx;
@@ -494,7 +493,7 @@
 			flex-grow: 1;
 			height: 800rpx;
 			box-sizing: border-box;
-			padding-bottom: 90rpx;
+			padding-bottom: 120rpx;
 			position: relative;
 		}
 

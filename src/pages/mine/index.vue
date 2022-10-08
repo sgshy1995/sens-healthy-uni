@@ -210,6 +210,11 @@
 				tempFilePath: ''
 			}
 		},
+		onLoad(){
+			uni.switchTab({
+				url: '/pages/index/index'
+			});
+		},
 		computed: {
 			userInfo(){
 				return this.$store.state.user.userInfo

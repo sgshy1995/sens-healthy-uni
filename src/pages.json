@@ -223,6 +223,12 @@
 				"iconPath": "static/images/tab/mine.png",
 				"selectedIconPath": "static/images/tab/mine_active.png"
 			}
-		]
+		],
+		"midButton": {
+			"width": "80px",
+			"height": "80px",
+			"iconWidth": "36px",
+			"backgroundImage": "static/images/middle-all.png"
+		}
 	}
 }

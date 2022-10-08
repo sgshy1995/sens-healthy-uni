@@ -58,6 +58,11 @@
 			this.getCourseChart()
 			this.getEquipmentChart()
 		},
+		onLoad(){
+			uni.switchTab({
+				url: '/pages/mine/index'
+			});
+		},
 		methods: {
 			getCourseChart(){
 				return new Promise((resolve, reject) => {

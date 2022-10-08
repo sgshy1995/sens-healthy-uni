@@ -3,7 +3,7 @@
 		<view class="index-wrapper" :class="{hiden: visible}">
 			<view class="index-nav" placeholder title="" leftIconSize="28" border bgColor="#fff">
 				<u-status-bar></u-status-bar>
-				<view class="index-nav-in">
+				<!-- <view class="index-nav-in">
 					<view class="index-nav-in-left"></view>
 					<view class="index-nav-in-center">
 						<view class="index-nav-tabs">
@@ -22,8 +22,12 @@
 							<image class="add-icon" src="@/static/images/recovery/tips.png"></image>
 						</view>
 					</view>
+				</view> -->
+				<view class="index-nav-title">
+					<image class="index-nav-title-img" src="@/static/images/recovery/recovery.png"></image>
+					<text class="index-nav-title-in">智能处方</text>
 				</view>
-				
+				<view class="index-nav-tip">汇集智能处方相关的视频、文章等, 内容全部为您精心挑选, 让您拥有健康、全面的第一信息</view>
 			</view>
 			<Prescription @hide="handleHidePrescription" @show="handleShowPrescription" v-show="current === 0"></Prescription>
 		</view>
@@ -60,6 +64,11 @@
 				current: 0,
 				message: 998
 			}
+		},
+		onLoad(){
+			uni.switchTab({
+				url: '/pages/store/index'
+			});
 		},
 		methods: {
 			showCamera(){
@@ -105,6 +114,34 @@
 			width: 100%;
 			box-sizing: border-box;
 			border-bottom: 1px solid #ddd;
+			
+			.index-nav-title{
+				width: 100%;
+				box-sizing: border-box;
+				padding: 0 24rpx;
+				display: flex;
+				align-items: center;
+				
+				.index-nav-title-img{
+					width: 48rpx;
+					height: 48rpx;
+					margin-right: 12rpx;
+				}
+				
+				.index-nav-title-in{
+					font-size: 14px;
+					font-weight: bold;
+				}
+			}
+			
+			.index-nav-tip{
+				width: 100%;
+				box-sizing: border-box;
+				padding: 0 24rpx 24rpx 24rpx;
+				font-size: 12px;
+				color: #666;
+				margin-top: 24rpx;
+			}
 			
 			.index-nav-in{
 				width: 100%;
