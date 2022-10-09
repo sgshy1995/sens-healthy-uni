@@ -35,23 +35,65 @@
 						</view>
 					</view>
 					<view class="top-up-bottom-action-sub-title">
-						<u-checkbox :key="refreshKey" v-model="ifOther" shape="square" label="" size="20" iconSize="18" @change="changeOther" activeColor="#4F68B0"></u-checkbox>
+						<u-checkbox :key="refreshKey" v-model="ifOther" shape="square" label="" size="20" iconSize="18"
+							@change="changeOther" activeColor="#4F68B0"></u-checkbox>
 						<text class="top-up-bottom-action-sub-title-text" :class="{active: ifOther}">其他金额</text>
 					</view>
 					<view class="top-up-bottom-action-other" v-if="ifOther" @click="handleShowNumber">
 						<text class="top-up-bottom-action-other-title">您可以输入其他金额</text>
 						<text class="top-up-bottom-action-other-text">¥ {{ other_fee || '0' }}</text>
 					</view>
-					<keyboard-price max="100000" focusColor="#4F68B0" ref="keyboardPrice" type="digit" v-model="fee" :inputOptions="{placeholder: '请输入充值金额'}"
-						@onDone="onDonePrice"></keyboard-price>
+					<keyboard-price max="100000" focusColor="#4F68B0" ref="keyboardPrice" type="digit" v-model="fee"
+						:inputOptions="{placeholder: '请输入充值金额'}" @onDone="onDonePrice"></keyboard-price>
 				</view>
 				<view class="top-up-bottom-buttons">
-					<view class="top-up-bottom-button" :class="{disabled}" @click="handleTopUp">
+					<view class="top-up-bottom-button" :class="{disabled}" @click="handleShowTopUp">
 						立即充值
 					</view>
 				</view>
 			</view>
 		</scroll-view>
+		<u-popup :show="showConfirm" @close="closeConfirm" @open="openConfirm">
+			<view class="confirm-start">
+				<view class="confirm-start-info">充值金额：¥{{ this.ifOther ? this.other_fee : this.now_fee }}</view>
+				<view class="confirm-start-title">选择支付方式</view>
+				<view class="confirm-start-body">
+					<view class="confirm-start-item">
+						<view class="confirm-start-item-left">
+							<image src="@/static/images/payment/payment-wechat.png" class="confirm-start-item-left-img">
+							</image>
+							<text class="confirm-start-item-left-text">微信支付</text>
+						</view>
+						<view class="confirm-start-item-right">
+							<u-radio-group activeColor="#4F68B0" v-model="radiovalue" placement="column" @change="groupChange">
+								<u-radio activeColor="#4F68B0" label="" name="wechat"
+									@change="radioChange">
+								</u-radio>
+							</u-radio-group>
+						</view>
+					</view>
+					<view class="confirm-start-item last-one">
+						<view class="confirm-start-item-left">
+							<image src="@/static/images/payment/payment-alipay.png" class="confirm-start-item-left-img">
+							</image>
+							<text class="confirm-start-item-left-text">支付宝支付</text>
+						</view>
+						<view class="confirm-start-item-right">
+							<u-radio-group activeColor="#4F68B0" v-model="radiovalue" placement="column" @change="groupChange">
+								<u-radio activeColor="#4F68B0" label="" name="alipay"
+									@change="radioChange">
+								</u-radio>
+							</u-radio-group>
+						</view>
+					</view>
+				</view>
+				<view class="confirm-start-confirm">
+					<view class="confirm-start-confirm-in" @click="handleTopUp">
+						确认支付
+					</view>
+				</view>
+			</view>
+		</u-popup>
 	</view>
 </template>
 
@@ -64,12 +106,13 @@
 	export default {
 		data() {
 			return {
+				showConfirm: false,
+				radiovalue: 'wechat',
 				ifOther: false,
 				checkboxList: [{
-						name: '其他金额',
-						disabled: false
-					}
-				],
+					name: '其他金额',
+					disabled: false
+				}],
 				itemsList: [{
 						name: '¥100',
 						value: '100'
@@ -117,41 +160,59 @@
 			disabled() {
 				return (this.ifOther && !this.other_fee) ? true : false
 			},
-			userInfo(){
+			userInfo() {
 				return this.$store.state.user.userInfo
 			},
-			info(){
+			info() {
 				return this.$store.state.user.info
 			}
 		},
 		methods: {
-			handleTopUp(){
-				if(this.disabled){
+			groupChange(n) {
+				console.log('groupChange', n);
+			},
+			radioChange(n) {
+				console.log('radioChange', n);
+			},
+			closeConfirm(){
+				this.showConfirm = false
+				this.radiovalue = 'wechat'
+			},
+			openConfirm(){
+				this.showConfirm = true
+			},
+			handleShowTopUp(){
+				if (this.disabled) {
 					return
 				}
-				this.$loadingOn('模拟充值中')
-				setTimeout(()=>{
-					this.$loadingOn('正在充值')
-					setTimeout(()=>{
-						addBalanceByUserIdAction(this.ifOther ? this.other_fee : this.now_fee).then(res=>{
+				this.showConfirm = true
+			},
+			handleTopUp() {
+				this.$loadingOn(`模拟调取${this.radiovalue === 'wechat' ? '微信' : '支付宝'}支付API`)
+				setTimeout(() => {
+					this.$loadingOn('正在模拟充值')
+					setTimeout(() => {
+						addBalanceByUserIdAction(this.ifOther ? this.other_fee : this.now_fee).then(
+						res => {
 							this.other_fee = ''
 							this.fee = ''
 							this.loadData()
 							this.$toast('充值成功')
-						}).catch(err=>{
+							this.showConfirm = false
+						}).catch(err => {
 							this.$loadingOff()
 						})
-					}, 1000);
-				}, 1000);
+					}, 2000);
+				}, 2000);
 			},
-			loadData(){
-				this.$store.dispatch('getInfo').then(res=>{
+			loadData() {
+				this.$store.dispatch('getInfo').then(res => {
 					this.$loadingOff()
-				}).catch(err=>{
+				}).catch(err => {
 					this.$loadingOff()
 				})
 			},
-			handleRefresh(){
+			handleRefresh() {
 				this.$loadingOn()
 				this.loadData()
 			},
@@ -163,7 +224,7 @@
 					this.ifOther = false
 					this.now_fee = ''
 					this.fee = ''
-					this.refreshKey ++
+					this.refreshKey++
 				}
 				this.current = index
 				this.now_fee = this.itemsList[index].value
@@ -171,7 +232,7 @@
 			changeOther(value) {
 				console.log('value', value)
 				this.ifOther = value
-				if(!this.ifOther){
+				if (!this.ifOther) {
 					this.now_fee = ''
 					this.fee = ''
 				}
@@ -195,6 +256,93 @@
 </script>
 
 <style lang="scss">
+	.confirm-start{
+		width: 100vw;
+		box-sizing: border-box;
+		padding: 36rpx 36rpx 0 36rpx;
+		
+		.confirm-start-info{
+			width: 100%;
+			font-size: 16px;
+			font-weight: bold;
+			color: #333;
+		}
+		
+		.confirm-start-title{
+			width: 100%;
+			font-size: 14px;
+			font-weight: bold;
+			color: #333;
+			margin-top: 24rpx;
+		}
+		
+		.confirm-start-body{
+			width: 100%;
+			margin-top: 24rpx;
+			
+			.confirm-start-item{
+				width: 100%;
+				box-sizing: border-box;
+				border-bottom: 1px solid #DADBDE;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				padding: 24rpx 0;
+				
+				&.last-one{
+					border-bottom: none;
+				}
+				
+				.confirm-start-item-left{
+					display: flex;
+					align-items: center;
+					
+					.confirm-start-item-left-img{
+						width: 48rpx;
+						height: 48rpx;
+						margin-right: 12rpx;
+					}
+					
+					.confirm-start-item-left-text{
+						font-size: 14px;
+						color: #333;
+					}
+				}
+			}
+		}
+		
+		.confirm-start-confirm {
+			width: 100%;
+			box-sizing: border-box;
+			padding: 24rpx;
+			margin-top: 24rpx;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		
+			.confirm-start-confirm-in {
+				box-sizing: border-box;
+				border-radius: 24rpx;
+				padding: 0 24rpx;
+				height: 70rpx;
+				width: 220rpx;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				background: #4F68B0;
+				color: #fff;
+				font-size: 14px;
+				font-weight: bold;
+				white-space: nowrap;
+		
+				&.disabled {
+					background: #EBEDF0;
+					color: #C8C9CC;
+				}
+			}
+		}
+	}
+	
 	.top-up-wrapper {
 		width: 100vw;
 		height: 100vh;
@@ -247,15 +395,15 @@
 				background: #fff;
 				box-sizing: border-box;
 				padding: 24rpx;
-				
-				.top-up-bottom-card-top{
+
+				.top-up-bottom-card-top {
 					width: 100%;
 					display: flex;
 					align-items: center;
 					justify-content: space-between;
 				}
-				
-				.top-up-bottom-card-bottom{
+
+				.top-up-bottom-card-bottom {
 					margin-top: 24rpx;
 					font-size: 12px;
 					font-weight: bold;
@@ -292,8 +440,8 @@
 					}
 				}
 			}
-			
-			.top-up-bottom-buttons{
+
+			.top-up-bottom-buttons {
 				width: 100%;
 				border-radius: 24rpx;
 				background: #fff;
@@ -303,8 +451,8 @@
 				display: flex;
 				align-items: center;
 				justify-content: center;
-				
-				.top-up-bottom-button{
+
+				.top-up-bottom-button {
 					box-sizing: border-box;
 					border-radius: 24rpx;
 					padding: 0 24rpx;
@@ -318,8 +466,8 @@
 					font-size: 14px;
 					font-weight: bold;
 					white-space: nowrap;
-					
-					&.disabled{
+
+					&.disabled {
 						background: #EBEDF0;
 						color: #C8C9CC;
 					}
@@ -393,8 +541,8 @@
 						font-weight: bold;
 						white-space: nowrap;
 						padding-left: 12rpx;
-						
-						&.active{
+
+						&.active {
 							color: #333;
 						}
 					}
