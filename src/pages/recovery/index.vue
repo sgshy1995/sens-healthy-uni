@@ -27,9 +27,9 @@
 					<image class="index-nav-title-img" src="@/static/images/recovery/recovery.png"></image>
 					<text class="index-nav-title-in">智能处方</text>
 				</view>
-				<view class="index-nav-tip">汇集智能处方相关的视频、文章等, 内容全部为您精心挑选, 让您拥有健康、全面的第一信息</view>
+				<view class="index-nav-tip">汇集免费、公开的智能处方相关视频和文章, 内容全部为您精心挑选, 让您拥有健康、全面的第一信息</view>
 			</view>
-			<Prescription @hide="handleHidePrescription" @show="handleShowPrescription" v-show="current === 0"></Prescription>
+			<Prescription ref="Prescription" @hide="handleHidePrescription" @show="handleShowPrescription" v-show="current === 0"></Prescription>
 		</view>
 	</view>
 	
@@ -69,6 +69,15 @@
 			uni.switchTab({
 				url: '/pages/store/index'
 			});
+		},
+		onShow(){
+			this.$nextTick(()=>{
+				if(!this.$refs.Prescription.dataSource.length){
+					this.$refs.Prescription.getData().then(res => {
+						this.$refs.Prescription.dataSource = [...res.data]
+					})
+				}
+			})
 		},
 		methods: {
 			showCamera(){

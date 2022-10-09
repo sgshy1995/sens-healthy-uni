@@ -18,9 +18,9 @@ Vue.prototype.$toast  = function(message,icon){
 	})
 }
 
-Vue.prototype.$loadingOn  = function(){
+Vue.prototype.$loadingOn  = function(title){
 	uni.showLoading({
-		title: '',
+		title: title ? title : '',
 		mask: true
 	})
 }

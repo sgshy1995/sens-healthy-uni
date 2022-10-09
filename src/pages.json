@@ -98,6 +98,15 @@
             
         }
 		,{
+		    "path" : "pages_mine/top-up",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		}
+		,{
 		    "path" : "pages_mine/updateRecord",
 		    "style" :                                                                                    
 		    {

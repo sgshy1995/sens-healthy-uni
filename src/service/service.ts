@@ -129,6 +129,16 @@ export const infoUploadAction = (path:string): Promise<Record<string,any>> => {
 	},path)
 }
 
+// 根据 jwt 信息充值
+const addBalanceByUserIdUrl = '/user_info/balance/add'
+export const addBalanceByUserIdAction = (balance: string): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: addBalanceByUserIdUrl,
+    method: 'PUT',
+	data: {balance}
+  })
+}
+
 // 更新用户信息
 const updateUserUrl = (id:number)=>`/user/${id}`
 export const updateUserAction = (user: Record<string,any>, device_id?: string, phone_capture?: string): Promise<Record<string,any>> => {

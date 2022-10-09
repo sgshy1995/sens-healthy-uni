@@ -310,8 +310,11 @@
 					uni.removeStorageSync('SYS_AUTH_TOKEN_KEY')
 					uni.removeStorageSync('SYS_SWITCH_TYPE')
 					this.$emit('change')
-					uni.reLaunch({
-						url: "/pages/guard/index?notAuth=1"
+					this.$store.dispatch('setAuthStatus', false).then(res=>{
+						uni.hideTabBar()
+						uni.switchTab({
+							url: '/pages/index/index'
+						});
 					})
 				}).catch(err => {
 				})

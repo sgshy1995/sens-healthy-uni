@@ -57,6 +57,26 @@
 		onShow(){
 			this.getCourseChart()
 			this.getEquipmentChart()
+			this.$nextTick(()=>{
+				if(!this.$refs.Course.recommendList.length){
+					this.$refs.Course.getCarouselData()
+					this.$refs.Course.getData().then(res => {
+						this.$refs.Course.recommendList = [...res.data]
+					})
+				}
+				if(!this.$refs.Course.recommendListLive.length){
+					this.$refs.Course.getCarouselData()
+					this.$refs.Course.getDataLive().then(res => {
+						this.$refs.Course.recommendListLive = [...res.data]
+					})
+				}
+				if(!this.$refs.Equipment.recommendList.length){
+					this.$refs.Equipment.getCarouselData()
+					this.$refs.Equipment.getData().then(res => {
+						this.$refs.Equipment.recommendList = [...res.data]
+					})
+				}
+			})
 		},
 		onLoad(){
 			uni.switchTab({

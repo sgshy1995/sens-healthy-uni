@@ -71,13 +71,13 @@
 					</view>
 					<view class="mine-top-out-info-item item-last">
 						<view class="mine-top-out-item-top">
-							0
+							{{ info.balance }}
 						</view>
 						<view class="mine-top-out-item-bottom">
 							余额
 						</view>
 					</view>
-					<view class="mine-top-out-info-add">充值</view>
+					<view class="mine-top-out-info-add" @click="handleShowTopUp">充值</view>
 				</view>
 				<view class="mine-top-out-record" v-if="showRecord">
 					<view class="mine-info-record-body">
@@ -297,6 +297,16 @@
 				const that = this
 				uni.navigateTo({
 					url: "/pages_mine/userInfo",
+					success: function(res) {
+					    // 通过eventChannel向被打开页面传送数据
+					    res.eventChannel.emit('show', { userInfo: that.userInfo })
+					}
+				})
+			},
+			handleShowTopUp() {
+				const that = this
+				uni.navigateTo({
+					url: "/pages_mine/top-up",
 					success: function(res) {
 					    // 通过eventChannel向被打开页面传送数据
 					    res.eventChannel.emit('show', { userInfo: that.userInfo })

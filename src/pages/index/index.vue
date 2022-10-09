@@ -135,6 +135,8 @@
 		methods: {
 			handleSuccess(){
 				this.$store.dispatch('setAuthStatus', true)
+				this.$store.dispatch('getUserInfo')
+				this.$store.dispatch('getInfo')
 			},
 			handleChangeSwitch(){
 				this.switchType = this.switchType === 0 ? 1 : 0
