@@ -58,7 +58,7 @@
 				<view class="confirm-start-info">充值金额：¥{{ this.ifOther ? this.other_fee : this.now_fee }}</view>
 				<view class="confirm-start-title">选择支付方式</view>
 				<view class="confirm-start-body">
-					<view class="confirm-start-item">
+					<view class="confirm-start-item" @click="handleChangePayment('wechat')">
 						<view class="confirm-start-item-left">
 							<image src="@/static/images/payment/payment-wechat.png" class="confirm-start-item-left-img">
 							</image>
@@ -72,7 +72,7 @@
 							</u-radio-group>
 						</view>
 					</view>
-					<view class="confirm-start-item last-one">
+					<view class="confirm-start-item last-one" @click="handleChangePayment('alipay')">
 						<view class="confirm-start-item-left">
 							<image src="@/static/images/payment/payment-alipay.png" class="confirm-start-item-left-img">
 							</image>
@@ -180,6 +180,9 @@
 			},
 			openConfirm(){
 				this.showConfirm = true
+			},
+			handleChangePayment(type){
+				this.radiovalue = type
 			},
 			handleShowTopUp(){
 				if (this.disabled) {
