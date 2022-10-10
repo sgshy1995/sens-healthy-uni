@@ -131,11 +131,21 @@ export const infoUploadAction = (path:string): Promise<Record<string,any>> => {
 
 // 根据 jwt 信息充值
 const addBalanceByUserIdUrl = '/user_info/balance/add'
-export const addBalanceByUserIdAction = (balance: string): Promise<Record<string,any>> => {
+export const addBalanceByUserIdAction = (balance: string, payment_type: number): Promise<Record<string,any>> => {
   return doRequestAction({
     url: addBalanceByUserIdUrl,
     method: 'PUT',
-	data: {balance}
+	data: {balance, payment_type}
+  })
+}
+
+// 充值订单列表获取
+const getTopUpOrdersByUserIdUrl = '/top_up_order'
+export const getTopUpOrdersByUserIdAction = (order_type: string, order: string): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: getTopUpOrdersByUserIdUrl,
+    method: 'GET',
+	data: {order_type, order}
   })
 }
 

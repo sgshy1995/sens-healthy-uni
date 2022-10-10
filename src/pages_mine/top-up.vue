@@ -7,6 +7,9 @@
 					<text>返回</text>
 				</view>
 				<text class="top-title">充值</text>
+				<view class="top-right" @click="handleShowHistory">
+					<text>充值记录</text>
+				</view>
 			</view>
 			<view class="top-up-bottom">
 				<view class="top-up-bottom-card">
@@ -168,6 +171,16 @@
 			}
 		},
 		methods: {
+			handleShowHistory() {
+				const that = this
+				uni.navigateTo({
+					url: "/pages_mine/top-up-history",
+					success: function(res) {
+					    // 通过eventChannel向被打开页面传送数据
+					    
+					}
+				})
+			},
 			groupChange(n) {
 				console.log('groupChange', n);
 			},
@@ -191,11 +204,11 @@
 				this.showConfirm = true
 			},
 			handleTopUp() {
-				this.$loadingOn(`模拟调取${this.radiovalue === 'wechat' ? '微信' : '支付宝'}支付API`)
+				this.$loadingOn(`模拟调取${this.radiovalue === 'wechat' ? '微信' : this.radiovalue === 'alipay' ? '支付宝' : 'Apple Pay'}支付API`)
 				setTimeout(() => {
 					this.$loadingOn('正在模拟充值')
 					setTimeout(() => {
-						addBalanceByUserIdAction(this.ifOther ? this.other_fee : this.now_fee).then(
+						addBalanceByUserIdAction(this.ifOther ? this.other_fee : this.now_fee, this.radiovalue === 'wechat' ? 1 : this.radiovalue === 'alipay' ? 2 : 3).then(
 						res => {
 							this.other_fee = ''
 							this.fee = ''
@@ -373,6 +386,17 @@
 				justify-content: center;
 				position: absolute;
 				left: 20rpx;
+				bottom: 30rpx;
+				font-size: 16px;
+				color: #fff;
+			}
+			
+			.top-right {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				position: absolute;
+				right: 20rpx;
 				bottom: 30rpx;
 				font-size: 16px;
 				color: #fff;
