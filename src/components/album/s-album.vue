@@ -54,7 +54,7 @@
 		watch: {
 			urlsShow: {
 				handler(){
-					console.log('urlsShow', this.urlsShow)
+					//console.log('urlsShow', this.urlsShow)
 				},
 				deep: true
 			}

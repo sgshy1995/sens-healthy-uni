@@ -10,7 +10,7 @@
 				</view>
 			</view>
 		</view>
-		<Course :courseCharts="courseCharts" v-show="showType === 'course'" ref="Course" />
+		<Course :courseCharts="courseCharts" v-show="showType === 'course'" ref="Course" @chart="getCourseChart" />
 		<Equipment :equipmentCharts="equipmentCharts" v-show="showType === 'equipment'" ref="Equipment" />
 	</view>
 	

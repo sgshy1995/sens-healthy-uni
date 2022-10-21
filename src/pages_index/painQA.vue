@@ -264,7 +264,6 @@
 						this.dataSource.map(item => {
 							item.urls = item.image_data ? item.image_data.split(',').map(url => this.baseUrl +
 								url) : []
-							console.log('item.urls', item.urls)
 							if (moment(new Date(item.question_time), 'YYYY-MM-DD').format('YYYY-MM-DD') ===
 								moment(new Date(), 'YYYY-MM-DD').format('YYYY-MM-DD')) {
 								item.show_question_time = '今天 ' + moment(new Date(item.question_time), 'HH:mm')

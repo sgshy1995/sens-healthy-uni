@@ -181,6 +181,18 @@
 					}
 				})
 			},
+			handleShowSuccess(ready) {
+				const that = this
+				uni.navigateTo({
+					url: "/pages_mine/top-up-success",
+					success: function(res) {
+					    // 通过eventChannel向被打开页面传送数据
+					    res.eventChannel.emit('show', {
+					    	ready
+					    })
+					}
+				})
+			},
 			groupChange(n) {
 				console.log('groupChange', n);
 			},
@@ -212,9 +224,10 @@
 						res => {
 							this.other_fee = ''
 							this.fee = ''
-							this.loadData()
-							this.$toast('充值成功')
-							this.showConfirm = false
+							this.loadData().then(res=>{
+								this.handleShowSuccess(this.ifOther ? this.other_fee : this.now_fee)
+								this.showConfirm = false
+							})
 						}).catch(err => {
 							this.$loadingOff()
 						})
@@ -222,10 +235,14 @@
 				}, 2000);
 			},
 			loadData() {
-				this.$store.dispatch('getInfo').then(res => {
-					this.$loadingOff()
-				}).catch(err => {
-					this.$loadingOff()
+				return new Promise((resolve, reject) => {
+					this.$store.dispatch('getInfo').then(res => {
+						this.$loadingOff()
+						resolve(res)
+					}).catch(err => {
+						this.$loadingOff()
+						reject(err)
+					})
 				})
 			},
 			handleRefresh() {

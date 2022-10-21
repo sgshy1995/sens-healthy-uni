@@ -116,7 +116,52 @@
 		    
 		}
 		,{
+		    "path" : "pages_mine/top-up-success",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		}
+		,{
 		    "path" : "pages_mine/updateRecord",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		}
+		,{
+		    "path" : "pages_mine/address",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		}
+		,{
+		    "path" : "pages_mine/address-detail",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		}
+		,{
+		    "path" : "pages_mine/mineInfo-course-order-detail",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		}
+		,{
+		    "path" : "pages_mine/mineInfo-equipment-order-detail",
 		    "style" :                                                                                    
 		    {
 		        "navigationBarTitleText": "",
@@ -172,6 +217,50 @@
 		},
 		{
 		    "path" : "pages_store/chart",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "",
+		        "enablePullDownRefresh": false,
+		        "app-plus" : {
+		        	"bounce" : "none" // 取消APP端iOS回弹,避免与下拉刷新冲突 (可统一配在 'globalStyle')
+		        }
+		    }
+		},
+		{
+		    "path" : "pages_store/payment-course",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "",
+		        "enablePullDownRefresh": false,
+		        "app-plus" : {
+		        	"bounce" : "none" // 取消APP端iOS回弹,避免与下拉刷新冲突 (可统一配在 'globalStyle')
+		        }
+		    }
+		},
+		{
+		    "path" : "pages_store/payment-equipment",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "",
+		        "enablePullDownRefresh": false,
+		        "app-plus" : {
+		        	"bounce" : "none" // 取消APP端iOS回弹,避免与下拉刷新冲突 (可统一配在 'globalStyle')
+		        }
+		    }
+		},
+		{
+		    "path" : "pages_store/payment-course-success",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "",
+		        "enablePullDownRefresh": false,
+		        "app-plus" : {
+		        	"bounce" : "none" // 取消APP端iOS回弹,避免与下拉刷新冲突 (可统一配在 'globalStyle')
+		        }
+		    }
+		},
+		{
+		    "path" : "pages_store/payment-equipment-success",
 		    "style" :                                                                                    
 		    {
 		        "navigationBarTitleText": "",

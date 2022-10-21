@@ -94,7 +94,8 @@
 				baseUrl: process.env.VUE_APP_API_BASE_URL + '/',
 				selectedList: [],
 				realySelectedList: [],
-				selectedRowList: []
+				selectedRowList: [],
+				selectedOuterRowList: []
 			}
 		},
 		mounted() {
@@ -157,6 +158,7 @@
 			renderList(){
 				this.realySelectedList = this.selectedList.map(id=>this.outerList.find(item=>item.no_use_id === id).ids).flat()
 				this.selectedRowList = this.realySelectedList.map(id=>this.equipmentsList.find(item=>item.id === id))
+				this.selectedOuterRowList = this.selectedList.map(id=>this.outerList.find(item=>item.no_use_id === id))
 				const totalInfo = {
 					num: 0,
 					originTotal: 0,
@@ -167,6 +169,7 @@
 					totalInfo.originTotal += (Number(item.equipment_model_info.price) * item.add_num)
 					totalInfo.discountTotal += (item.equipment_model_info.is_discount ? (Number(item.equipment_model_info.discount) * item.add_num) : (Number(item.equipment_model_info.price) * item.add_num))
 				})
+				console.log('selectedRowList selectedRowList', this.selectedRowList)
 				this.$emit('change', totalInfo)
 			},
 			handleSelectInfo(index){
@@ -194,11 +197,14 @@
 				})
 			},
 			getEquipmentChart(){
+				console.log('getEquipmentChart getEquipmentChart getEquipmentChart')
 				return new Promise((resolve, reject) => {
 					getEquipmentChartListAction().then(res=>{
+						console.log(1111)
 						const data = res.data ? [...res.data] : []
 						const equipment_type_map = ['康复训练器材', '康复理疗设备', '康复治疗师工具']
 						this.outerList = []
+						console.log(2222)
 						data.map(item=>{
 							item.equipment_info.equipment_type_show = equipment_type_map[item.equipment_info.equipment_type]
 							item.equipment_info.url = this.baseUrl + item.equipment_info.cover
@@ -219,17 +225,23 @@
 								this.outerList[findIndex].ids.push(item.id)
 							}
 						})
+						console.log(3333)
 						this.outerList.map(item=>{
 							if(!item.models.find(itemIn=>itemIn.inventory)){
 								item.empty = true
 							}
 						})
-						this.selectedList = this.selectedList.filter(id=>!this.outerList.find(item=>item.no_use_id===id).empty)
+						console.log(4444)
+						this.selectedList = this.selectedList.filter(id=>this.outerList.find(item=>item.no_use_id===id) && !this.outerList.find(item=>item.no_use_id===id).empty)
+						console.log(5555)
 						this.equipmentsList = [...data]
+						console.log(6666)
 						this.$emit('load', this.outerList.filter(item=>!item.empty).length)
+						console.log('load ========= load', this.outerList.filter(item=>!item.empty).length)
 						this.$loadingOff()
 						resolve(data)
 					}).catch(err=>{
+						console.log('err', err)
 						this.$loadingOff()
 						reject(err)
 					})
@@ -589,8 +601,8 @@
 					margin-top: 100rpx;
 				
 					.chart-bottom-empty-img {
-						width: 100rpx;
-						height: 100rpx;
+						width: 160rpx;
+						height: 160rpx;
 						margin-bottom: 24rpx;
 					}
 				

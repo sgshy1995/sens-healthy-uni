@@ -366,8 +366,8 @@
 					margin-top: 100rpx;
 				
 					.chart-bottom-empty-img {
-						width: 100rpx;
-						height: 100rpx;
+						width: 160rpx;
+						height: 160rpx;
 						margin-bottom: 24rpx;
 					}
 				

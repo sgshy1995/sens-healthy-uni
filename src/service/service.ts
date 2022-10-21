@@ -149,6 +149,93 @@ export const getTopUpOrdersByUserIdAction = (order_type: string, order: string):
   })
 }
 
+// 购物车课程下单
+const addChartCourseOrderByUserIdUrl = '/user_info/chart_course_order'
+export const addChartCourseOrderByUserIdAction = (info: {course_chart_ids: string, course_info: { course_ids: string, course_types: string, payment_num: string, order_prices: string }, order_time: string, payment_type: number}): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: addChartCourseOrderByUserIdUrl,
+    method: 'POST',
+	data: info
+  })
+}
+
+// 普通课程下单
+const addNormalCourseOrderByUserIdUrl = '/user_info/normal_course_order'
+export const addNormalCourseOrderByUserIdAction = (info: {course_info: { course_ids: string, course_types: string, payment_num: string, order_prices: string }, order_time: string, payment_type: number}): Promise<Record<string,any>> => {
+  console.log('addNormalCourseOrderByUserIdAction ---', info)
+  return doRequestAction({
+    url: addNormalCourseOrderByUserIdUrl,
+    method: 'POST',
+	data: info
+  })
+}
+
+// 购物车器材下单
+const addChartEquipmentOrderByUserIdUrl = '/user_info/chart_equipment_order'
+export const addChartEquipmentOrderByUserIdAction = (info: {equipment_chart_ids: string, equipment_info: { equipment_ids: string, model_ids: string, order_nums: string, course_types: string, payment_num: string }, shipping_address: string, shipping_name: string, shipping_phone: string, order_time: string, payment_type: number}): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: addChartEquipmentOrderByUserIdUrl,
+    method: 'POST',
+	data: info
+  })
+}
+
+// 普通器材下单
+const addNormalEquipmentOrderByUserIdUrl = '/user_info/normal_equipment_order'
+export const addNormalEquipmentOrderByUserIdAction = (info: {equipment_info: { equipment_ids: string, model_ids: string, order_nums: string, course_types: string, payment_num: string }, shipping_address: string, shipping_name: string, shipping_phone: string, order_time: string, payment_type: number}): Promise<Record<string,any>> => {
+  console.log('addNormalEquipmentOrderByUserIdAction ---', info)
+  return doRequestAction({
+    url: addNormalEquipmentOrderByUserIdUrl,
+    method: 'POST',
+	data: info
+  })
+}
+
+// 根据 jwt 信息获取课程订单
+const findManyCourseOrdersByUserIdUrl = '/course_order/user'
+export const findManyCourseOrdersByUserIdAction = (): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: findManyCourseOrdersByUserIdUrl,
+    method: 'GET'
+  })
+}
+
+// 根据 订单号 获取课程订单
+const findCourseOrderByOrderNoUrl = (order_no: string) => `/course_order/order_no/${order_no}`
+export const findCourseOrderByOrderNoAction = (order_no: string): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: findCourseOrderByOrderNoUrl(order_no),
+    method: 'GET'
+  })
+}
+
+// 根据 jwt 信息获取器材订单
+const findManyEquipmentOrdersByUserIdUrl = '/equipment_order/user'
+export const findManyEquipmentOrdersByUserIdAction = (): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: findManyEquipmentOrdersByUserIdUrl,
+    method: 'GET'
+  })
+}
+
+// 根据 订单号 获取器材订单
+const findEquipmentOrderByOrderNoUrl = (order_no: string) => `/equipment_order/order_no/${order_no}`
+export const findEquipmentOrderByOrderNoAction = (order_no: string): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: findEquipmentOrderByOrderNoUrl(order_no),
+    method: 'GET'
+  })
+}
+
+// 根据 订单号 确认收货
+const receiveOrderShipmentUrl = (order_no: string) => `/equipment_order/receive/${order_no}`
+export const receiveOrderShipmentAction = (order_no: string): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: receiveOrderShipmentUrl(order_no),
+    method: 'POST'
+  })
+}
+
 // 更新用户信息
 const updateUserUrl = (id:number)=>`/user/${id}`
 export const updateUserAction = (user: Record<string,any>, device_id?: string, phone_capture?: string): Promise<Record<string,any>> => {
@@ -166,6 +253,53 @@ export const logoutAction = (user: Record<string,any>): Promise<Record<string,an
     url: logoutUrl,
     method: 'POST',
 	data: user
+  })
+}
+
+// 根据 jwt 自动获取地址列表
+const getAddressListByJWTUrl = '/address'
+export const getAddressListByJWTAction = (): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: getAddressListByJWTUrl,
+    method: 'GET'
+  })
+}
+
+// 根据id地址获取
+const getAddressByIdUrl = (id:string)=>`/address/${id}`
+export const getAddressByIdAction = (id:string): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: getAddressByIdUrl(id),
+    method: 'GET'
+  })
+}
+
+// 创建地址
+const createAddressUrl = '/address'
+export const createAddressAction = (address: Record<string,any>): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: createAddressUrl,
+    method: 'POST',
+	data: address
+  })
+}
+
+// 更新地址
+const updateAddressUrl = '/address'
+export const updateAddressAction = (address: Record<string,any>): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: updateAddressUrl,
+    method: 'PUT',
+	data: address
+  })
+}
+
+// 根据id地址删除
+const deleteAddressByIdUrl = (id:string)=>`/address/${id}`
+export const deleteAddressByIdAction = (id:string): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: deleteAddressByIdUrl(id),
+    method: 'DELETE'
   })
 }
 
@@ -360,6 +494,18 @@ export const getVideoCourseByIdAction = (id: string): Promise<Record<string,any>
   })
 }
 
+// 视频课程根据多个id获取
+const getVideoCoursesByIdsUrl = '/video_course/find/ids'
+export const getVideoCoursesByIdsAction = (ids: string): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: getVideoCoursesByIdsUrl,
+    method: 'GET',
+	data: {
+		ids
+	}
+  })
+}
+
 // 热门轮播课程列表获取
 const getCarouselCoursesUrl = '/video_course/carousel'
 export const getCarouselCoursesAction = (): Promise<Record<string,any>> => {
@@ -397,6 +543,18 @@ export const getLiveCourseByIdAction = (id: string): Promise<Record<string,any>>
   })
 }
 
+// 直播课程根据多个id获取
+const getLiveCoursesByIdsUrl = '/live_course/find/ids'
+export const getLiveCoursesByIdsAction = (ids: string): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: getLiveCoursesByIdsUrl,
+    method: 'GET',
+	data: {
+		ids
+	}
+  })
+}
+
 // 器材列表获取
 const getEquipmentsUrl = '/equipment/custom'
 export const getEquipmentsAction = (equipment: Record<string,any>): Promise<Record<string,any>> => {
@@ -404,6 +562,18 @@ export const getEquipmentsAction = (equipment: Record<string,any>): Promise<Reco
     url: getEquipmentsUrl,
     method: 'GET',
 	data: equipment
+  })
+}
+
+// 器材列表获取包括型号，无分页，传id集合
+const getEquipmentsWithModelsUrl = '/equipment/with_models'
+export const getEquipmentsWithModelsAction = (ids: string): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: getEquipmentsWithModelsUrl,
+    method: 'GET',
+	data: {
+		ids
+	}
   })
 }
 

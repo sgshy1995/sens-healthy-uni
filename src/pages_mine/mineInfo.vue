@@ -21,19 +21,25 @@
 				            transform: 'scale(1)'
 				        }"
 				        itemStyle="padding-left: 15px; padding-right: 15px; height: 34px;"
+						@change="handleChangeTabs"
 				    >
 				    </u-tabs>
 			</view>
 		</view>
 		
 		<view class="mine-info-bottom">
-			
+			<MineInfoQuestionAsk ref="MineInfoQuestionAsk" v-show="current === 0"></MineInfoQuestionAsk>
+			<MineInfoCourseOrder ref="MineInfoCourseOrder" v-show="current === 1"></MineInfoCourseOrder>
+			<MineInfoEquipmentOrder ref="MineInfoEquipmentOrder" v-show="current === 2"></MineInfoEquipmentOrder>
 		</view>
 
 	</view>
 </template>
 
 <script>
+	import MineInfoQuestionAsk from '@/pages_mine/mineInfo-question-ask.vue'
+	import MineInfoCourseOrder from '@/pages_mine/mineInfo-course-order.vue'
+	import MineInfoEquipmentOrder from '@/pages_mine/mineInfo-equipment-order.vue'
 	export default {
 		data() {
 			return {
@@ -42,18 +48,24 @@
 						name: '我的问答'
 					},
 					{
-						name: '我的收藏'
+						name: '课程订单'
 					},
 					{
-						name: '康复处方'
+						name: '器材订单'
 					},
 					{
-						name: '我的订单'
-					}
+						name: '收藏夹'
+					},
 				],
 				avatarDefault: require('@/static/images/avatar-default.png'),
-				baseUrl: process.env.VUE_APP_API_BASE_URL + '/'
+				baseUrl: process.env.VUE_APP_API_BASE_URL + '/',
+				current: 0
 			}
+		},
+		components: {
+			MineInfoQuestionAsk,
+			MineInfoCourseOrder,
+			MineInfoEquipmentOrder
 		},
 		computed: {
 			userInfo(){
@@ -61,6 +73,16 @@
 			}
 		},
 		methods: {
+			handleChangeTabs(e){
+				this.current = e.index
+			},
+			loadData(){
+				this.$nextTick(()=>{
+					this.$refs.MineInfoQuestionAsk.getData()
+					this.$refs.MineInfoCourseOrder.getData()
+					this.$refs.MineInfoEquipmentOrder.getData()
+				})
+			},
 			showView(url) {
 				if(!url) return
 				// 预览图片
@@ -145,5 +167,8 @@
 			}
 		}
 
+		.mine-info-bottom{
+			background: #f6f6f6;
+		}
 	}
 </style>

@@ -35,7 +35,7 @@
 					<view class="mine-top-in-info-name">{{ userInfo.name || '森普健康用户' }}</view>
 					<view class="mine-top-in-info-username">@{{ userInfo.username }}</view>
 				</view>
-				<view class="mine-top-in-buttons">
+				<!-- <view class="mine-top-in-buttons">
 					<view class="mine-top-in-button">
 						<u-icon name="man-add-fill" color="rgba(79,104,176, 1)" size="18"></u-icon>
 						<text class="mine-top-in-button-text text-left">0</text>
@@ -46,7 +46,7 @@
 						<text class="mine-top-in-button-text text-left">0</text>
 						<text class="mine-top-in-button-text">点赞</text>
 					</view>
-				</view>
+				</view> -->
 				<view class="mine-top-in-des">
 					多年康复治疗经验，资深治疗师，擅长方向：颈椎，大腿。商务联系：18201659795。
 				</view>
@@ -58,15 +58,15 @@
 							0
 						</view>
 						<view class="mine-top-out-item-bottom">
-							积分
+							新消息
 						</view>
 					</view>
 					<view class="mine-top-out-info-item">
 						<view class="mine-top-out-item-top">
-							0
+							{{ info.integral }}
 						</view>
 						<view class="mine-top-out-item-bottom">
-							新消息
+							积分
 						</view>
 					</view>
 					<view class="mine-top-out-info-item item-last">
@@ -76,6 +76,9 @@
 						<view class="mine-top-out-item-bottom">
 							余额
 						</view>
+					</view>
+					<view class="mine-top-out-info-refresh" @click="handleRefreshInfo">
+						<u-icon name="reload" color="#4F68B0" size="36rpx"></u-icon>
 					</view>
 					<view class="mine-top-out-info-add" @click="handleShowTopUp">充值</view>
 				</view>
@@ -215,6 +218,11 @@
 				url: '/pages/index/index'
 			});
 		},
+		onShow(){
+			this.$nextTick(()=>{
+				this.$refs.MineInfo.loadData()
+			})
+		},
 		computed: {
 			userInfo(){
 				return this.$store.state.user.userInfo
@@ -301,6 +309,14 @@
 					    // 通过eventChannel向被打开页面传送数据
 					    res.eventChannel.emit('show', { userInfo: that.userInfo })
 					}
+				})
+			},
+			handleRefreshInfo(){
+				this.$loadingOn()
+				this.$store.dispatch('getInfo').then(res=>{
+					this.$loadingOff()
+				}).catch(err=>{
+					this.$loadingOff()
 				})
 			},
 			handleShowTopUp() {
@@ -578,6 +594,17 @@
 							color: #BABABA;
 							font-size: 13px;
 						}
+					}
+					
+					.mine-top-out-info-refresh{
+						position: absolute;
+						top: 50%;
+						left: 48rpx;
+						transform: translateY(-50%);
+						box-sizing: border-box;
+						display: flex;
+						align-items: center;
+						justify-content: center;
 					}
 					
 					.mine-top-out-info-add{

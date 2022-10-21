@@ -84,7 +84,7 @@
 					<u-icon name="shopping-cart-fill" color="#4F68B0" size="20"></u-icon>
 					<text class="course-detail-footer-left-text">加入购物车</text>
 				</view>
-				<view class="course-detail-footer-right">
+				<view class="course-detail-footer-right" @click="handleBuy">
 					<text class="course-detail-footer-right-buy">立即购买</text>
 					<text class="course-detail-footer-right-price" v-if="!info.is_discount">¥{{ info.price }}</text>
 					<text class="course-detail-footer-right-price" v-else>
@@ -106,6 +106,7 @@
 		createCourseChartAction
 	} from '@/service/service'
 	import SShowMore from '@/components/show-more/s-show-more'
+	import moment from 'moment'
 	export default {
 		data(){
 			return {
@@ -144,6 +145,33 @@
 			})
 		},
 		methods: {
+			async handleBuy(){
+				this.$loadingOn()
+				const course_res = this.show_type === 'video' ? await getVideoCourseByIdAction(this.id) : await getLiveCourseByIdAction(this.id)
+				const course = course_res.data ? {...course_res.data} : null
+				console.log('course', course)
+				if(course){
+					const that = this
+					const course_type_map = ['运动康复', '神经康复', '产后康复', '术后康复']
+					course.course_type_show = course_type_map[course.course_type]
+					uni.navigateTo({
+						url: "/pages_store/payment-course",
+						success: function(res) {
+							// 通过eventChannel向被打开页面传送数据
+							res.eventChannel.emit('show', {
+								totalInfo: {
+									course: 1
+								},
+								courses: [{course_info: course, add_course_type: that.show_type === 'video' ? 0 : 1}],
+								mount: course.is_discount ? course.discount : course.price,
+								order_time: moment(new Date, 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD HH:mm:ss'),
+								payment_origin: 'normal'
+							})
+						}
+					})
+				}
+				this.$loadingOff()
+			},
 			handleAddChart(){
 				this.$loadingOn()
 				createCourseChartAction({

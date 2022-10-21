@@ -56,6 +56,9 @@
 					<view class="course-all-body" v-show="recommendList.length">
 						<view class="course-all-item" v-for="(item, index) in recommendList" :key="index"
 							@click="handleShowDetail(item, 'video')">
+							<view class="course-all-item-add-chart" @click.stop="handleAddChart(item, 'video')">
+								<u-icon name="shopping-cart" color="#333" size="48rpx"></u-icon>
+							</view>
 							<view class="course-all-item-left">
 								<image class="course-all-item-left-img" :src="item.url"></image>
 							</view>
@@ -109,6 +112,9 @@
 					<view class="course-all-body" v-show="recommendListLive.length">
 						<view class="course-all-item" v-for="(item, index) in recommendListLive" :key="index"
 							@click="handleShowDetail(item, 'live')">
+							<view class="course-all-item-add-chart" @click.stop="handleAddChart(item, 'live')">
+								<u-icon name="shopping-cart" color="#333" size="48rpx"></u-icon>
+							</view>
 							<view class="course-all-item-left">
 								<image class="course-all-item-left-img" :src="item.url"></image>
 							</view>
@@ -164,7 +170,8 @@
 	import {
 		getCarouselCoursesAction,
 		getVideoCourseAction,
-		getLiveCourseAction
+		getLiveCourseAction,
+		createCourseChartAction
 	} from '@/service/service'
 	export default {
 		data() {
@@ -245,6 +252,19 @@
 			})
 		},
 		methods: {
+			handleAddChart(record, type){
+				this.$loadingOn()
+				createCourseChartAction({
+					course_id: record.id,
+					add_course_type: type === 'live' ? 1 : 0
+				}).then(res=>{
+					this.$emit('chart')
+					this.$loadingOff()
+					this.$toast('已加入购物车~')
+				}).catch(err=>{
+					this.$loadingOff()
+				})
+			},
 			handleShowChart(){
 				const that = this
 				uni.navigateTo({
@@ -901,6 +921,22 @@
 					margin-bottom: 24rpx;
 					border-radius: 16rpx;
 					overflow: hidden;
+					position: relative;
+					z-index: 1;
+					
+					.course-all-item-add-chart {
+						width: 60rpx;
+						height: 60rpx;
+						background: #F2F2F2;
+						border-radius: 50%;
+						display: flex;
+						align-items: center;
+						justify-content: center;
+						position: absolute;
+						top: 12rpx;
+						right: 12rpx;
+						z-index: 2;
+					}
 
 					.course-all-item-left {
 						width: 280rpx;

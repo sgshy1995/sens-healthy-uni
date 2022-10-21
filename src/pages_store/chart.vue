@@ -33,13 +33,13 @@
 			@cancel="showModalCourse=false" content="确定清空课程购物车吗？"></u-modal>
 		<u-modal :show="showModalEquipment" showCancelButton confirmColor="#4F68B0" @confirm="handleClearEquipment"
 			@cancel="showModalEquipment=false" content="确定清空器材购物车吗？"></u-modal>
-		<view class="chart-footer">
+		<view class="chart-footer" v-if="totalInfo.course_num && showType === 'course'">
 			<view class="chart-footer-in">
 				<view class="chart-footer-in-one">
 					<view class="chart-footer-in-one-top">
 						<text class="chart-footer-in-one-left">选择全部</text>
 						<view class="chart-footer-in-one-right">
-							<view class="chart-footer-icon-select" @click="handleSelectAll" :class="{active: ifSelectAll}">
+							<view class="chart-footer-icon-select" @click="handleSelectAllCourse" :class="{active: ifSelectAllCourse && totalInfo.course_num}">
 								<view class="chart-footer-icon-select-in">
 									<u-icon name="checkbox-mark" color="#fff" size="28rpx"></u-icon>
 								</view>
@@ -48,22 +48,58 @@
 					</view>
 					<view class="chart-footer-in-one-bottom">
 						<text class="chart-footer-in-one-left">
-							<text class="chart-footer-in-one-left-left">共<text class="chart-footer-in-one-left-left-in"> {{ totalCount }} </text>件商品</text>
-							<text class="chart-footer-in-one-left-right">({{totalInfo.course}}课程，{{ totalInfo.equipment }}器材)</text>
+							<text class="chart-footer-in-one-left-left">共<text class="chart-footer-in-one-left-left-in"> {{ totalInfo.course }} </text>件商品</text>
+							<text class="chart-footer-in-one-left-right">({{ totalInfo.course }}课程)</text>
 						</text>
 						<text class="chart-footer-in-one-right">
-							<text class="chart-footer-in-one-right-price" v-if="originTotal === discountTotal">¥ {{ originTotal }}</text>
+							<text class="chart-footer-in-one-right-price" v-if="totalInfo.originCourseTotal === totalInfo.discountCourseTotal">¥ {{ totalInfo.originCourseTotal }}</text>
 							<view class="chart-footer-in-one-right-price" v-else>
-								<text class="in-discount">¥ {{ originTotal }}</text>
-								<text class="show-discount">¥ {{ discountTotal }}</text>
+								<text class="in-discount">¥ {{ totalInfo.originCourseTotal }}</text>
+								<text class="show-discount">¥ {{ totalInfo.discountCourseTotal }}</text>
 							</view>
 						</text>
 					</view>
 					
 				</view>
 				<view class="chart-footer-in-two">
-					<view class="chart-footer-right" :class="{disabled: !totalCount}" @cllick="handleBeginBuy">
-						<text class="chart-footer-right-buy">立即购买</text>
+					<view class="chart-footer-right" :class="{disabled: !totalCount}" @click="handleBeginBuyCourse">
+						<text class="chart-footer-right-buy">立即下单</text>
+					</view>
+				</view>
+			</view>
+			<u-safe-bottom></u-safe-bottom>
+		</view>
+		<view class="chart-footer" v-if="totalInfo.equipment_num && showType === 'equipment'">
+			<view class="chart-footer-in">
+				<view class="chart-footer-in-one">
+					<view class="chart-footer-in-one-top">
+						<text class="chart-footer-in-one-left">选择全部</text>
+						<view class="chart-footer-in-one-right">
+							<view class="chart-footer-icon-select" @click="handleSelectAllEquipment" :class="{active: ifSelectAllEquipment && totalInfo.equipment_num}">
+								<view class="chart-footer-icon-select-in">
+									<u-icon name="checkbox-mark" color="#fff" size="28rpx"></u-icon>
+								</view>
+							</view>
+						</view>
+					</view>
+					<view class="chart-footer-in-one-bottom">
+						<text class="chart-footer-in-one-left">
+							<text class="chart-footer-in-one-left-left">共<text class="chart-footer-in-one-left-left-in"> {{ totalInfo.equipment }} </text>件商品</text>
+							<text class="chart-footer-in-one-left-right">({{ totalInfo.equipment }}器材)</text>
+						</text>
+						<text class="chart-footer-in-one-right">
+							<text class="chart-footer-in-one-right-price" v-if="totalInfo.originEquipmentTotal === totalInfo.discountEquipmentTotal">¥ {{ totalInfo.originEquipmentTotal }}</text>
+							<view class="chart-footer-in-one-right-price" v-else>
+								<text class="in-discount">¥ {{ totalInfo.originEquipmentTotal }}</text>
+								<text class="show-discount">¥ {{ totalInfo.discountEquipmentTotal }}</text>
+							</view>
+						</text>
+					</view>
+					
+				</view>
+				<view class="chart-footer-in-two">
+					<view class="chart-footer-right" :class="{disabled: !totalCount}" @click="handleBeginBuyEquipment">
+						<text class="chart-footer-right-buy">立即下单</text>
 					</view>
 				</view>
 			</view>
@@ -79,6 +115,7 @@
 	} from '@/service/service'
 	import ChartCourse from '@/pages_store/chart-course'
 	import ChartEquipment from '@/pages_store/chart-equipment'
+	import moment from 'moment'
 	export default {
 		data() {
 			return {
@@ -120,6 +157,18 @@
 				})
 			})
 		},
+		onShow(){
+			this.$loadingOn()
+			this.$nextTick(()=>{
+				console.log('onShow onShow onShow')
+				this.$refs.ChartCourse.getCourseChart().then(()=>{
+					this.$refs.ChartCourse.selectedList = this.$refs.ChartCourse.coursesList.map(item=>item.id)
+				})
+				this.$refs.ChartEquipment.getEquipmentChart().then(()=>{
+					this.$refs.ChartEquipment.selectedList = this.$refs.ChartEquipment.outerList.filter(item=>!item.empty).map(item=>item.no_use_id)
+				})
+			})
+		},
 		computed: {
 			userInfo() {
 				return this.$store.state.user.userInfo
@@ -133,15 +182,66 @@
 			totalCount(){
 				return this.totalInfo.course + this.totalInfo.equipment
 			},
-			ifSelectAll(){
-				return (this.totalInfo.course + this.totalInfo.equipment) === (this.totalInfo.course_num + this.totalInfo.equipment_num)
+			ifSelectAllCourse(){
+				return this.totalInfo.course === this.totalInfo.course_num
+			},
+			ifSelectAllEquipment(){
+				return this.totalInfo.equipment === this.totalInfo.equipment_num
+			},
+			ifAllEmpty(){
+				return this.totalInfo.course_num + this.totalInfo.equipment_num === 0
 			}
 		},
 		methods: {
-			handleBeginBuy(){
-				if(!this.totalCount){
+			handleBeginBuyCourse(){
+				if(!this.totalInfo.course){
 					return
 				}
+				const that = this
+				uni.navigateTo({
+					url: "/pages_store/payment-course",
+					success: function(res) {
+						// 通过eventChannel向被打开页面传送数据
+						res.eventChannel.emit('show', {
+							totalInfo: {
+								...that.totalInfo,
+								totalCount: that.totalCount
+							},
+							courses: that.$refs.ChartCourse.selectedRowList,
+							mount: that.totalInfo.originCourseTotal === that.totalInfo.discountCourseTotal ?that.totalInfo.originCourseTotal : that.totalInfo.discountCourseTotal,
+							order_time: moment(new Date, 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD HH:mm:ss'),
+							payment_origin: 'chart'
+						})
+					}
+				})
+			},
+			handleBeginBuyEquipment(){
+				if(!this.totalInfo.equipment){
+					return
+				}
+				const that = this
+				uni.navigateTo({
+					url: "/pages_store/payment-equipment",
+					success: function(res) {
+						// 通过eventChannel向被打开页面传送数据
+						const selectedOuterRowList = [...that.$refs.ChartEquipment.selectedOuterRowList]
+						selectedOuterRowList.map(outer => {
+							outer.models = outer.models.filter(model => model.inventory)
+						})
+						res.eventChannel.emit('show', {
+							totalInfo: {
+								...that.totalInfo,
+								totalCount: that.totalCount
+							},
+							equipments: selectedOuterRowList,
+							real_equipments: that.$refs.ChartEquipment.selectedRowList.filter(item => item.equipment_model_info.inventory),
+							mount: that.totalInfo.originEquipmentTotal === that.totalInfo.discountEquipmentTotal ?that.totalInfo.originEquipmentTotal : that.totalInfo.discountEquipmentTotal,
+							order_time: moment(new Date, 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD HH:mm:ss'),
+							total_num: that.$refs.ChartEquipment.selectedRowList.map(item => item.add_num).reduce((a,b) => a + b),
+							payment_origin: 'chart'
+						})
+					}
+				})
 			},
 			handleClearCourse() {
 				this.$loadingOn()
@@ -199,13 +299,19 @@
 			},
 			loadEquipment(num){
 				this.totalInfo.equipment_num = num
+				console.log('loadEquipment -------- loadEquipment', num)
 			},
-			handleSelectAll(){
-				if(!this.ifSelectAll){
+			handleSelectAllCourse(){
+				if(!this.ifSelectAllCourse){
 					this.$refs.ChartCourse.handleSelectAll()
-					this.$refs.ChartEquipment.handleSelectAll()
 				}else{
 					this.$refs.ChartCourse.handleSelectClear()
+				}
+			},
+			handleSelectAllEquipment(){
+				if(!this.ifSelectAllEquipment){
+					this.$refs.ChartEquipment.handleSelectAll()
+				}else{
 					this.$refs.ChartEquipment.handleSelectClear()
 				}
 			}

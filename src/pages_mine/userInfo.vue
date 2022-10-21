@@ -44,6 +44,16 @@
 					</view>
 				</u-cell>
 			</u-cell-group>
+			<u-divider text="地址管理"></u-divider>
+			<u-cell-group>
+				<u-cell icon="car-fill" title="默认地址">
+					<view slot="value" class="user-info-item" @click="handleShowAddress">
+						<view class="in-text-new"
+							:class="{empty: !info.default_address_id}">{{ info.default_address_id ? info.default_address_info.all_text : '暂无地址信息' }}</view>
+						<view class="in-icon">地址管理 ></view>
+					</view>
+				</u-cell>
+			</u-cell-group>
 			<view class="userinfo-bottom">
 				<u-button color="#4F68B0" type="primary" text="退出登录" @click="handleShowModal"></u-button>
 			</view>
@@ -123,12 +133,27 @@
 		computed: {
 			userInfo(){
 				return this.$store.state.user.userInfo
+			},
+			info(){
+				return this.$store.state.user.info
 			}
 		},
 		created() {
 			this.device_id = uni.getSystemInfoSync().deviceId
 		},
 		methods: {
+			handleShowAddress(){
+				const that = this
+				uni.navigateTo({
+					url: "/pages_mine/address",
+					success: function(res) {
+						// 通过eventChannel向被打开页面传送数据
+						res.eventChannel.emit('show', {
+							
+						})
+					}
+				})
+			},
 			getUserInfo(){
 				this.$store.dispatch('getUserInfo')
 			},
@@ -472,6 +497,21 @@
 		.in-text {
 			color: #333;
 
+			&.empty {
+				color: #bec4c9;
+			}
+		}
+		
+		.in-text-new{
+			width: 300rpx;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			display: -webkit-box;
+			-webkit-line-clamp: 1;
+			-webkit-box-orient: vertical;
+			text-align: right;
+			font-size: 12px;
+			
 			&.empty {
 				color: #bec4c9;
 			}

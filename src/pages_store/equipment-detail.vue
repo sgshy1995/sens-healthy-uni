@@ -71,7 +71,7 @@
 					<u-icon name="shopping-cart-fill" color="#4F68B0" size="20"></u-icon>
 					<text class="equipment-detail-footer-left-text">加入购物车</text>
 				</view>
-				<view class="equipment-detail-footer-right" :class="{disabled: !modelInfo.inventory}">
+				<view class="equipment-detail-footer-right" :class="{disabled: !modelInfo.inventory}" @click="handleReBuy">
 					<text class="equipment-detail-footer-right-buy" v-if="modelInfo.inventory">立即购买</text>
 					<text class="equipment-detail-footer-right-price" v-if="!modelInfo.is_discount && modelInfo.inventory">¥{{ modelInfo.price }}</text>
 					<text class="equipment-detail-footer-right-price" v-if="modelInfo.is_discount && modelInfo.inventory">
@@ -90,9 +90,11 @@
 	import {
 		getEquipmentByIdAction,
 		getModelsByEquipmentIdAction,
-		createEquipmentChartAction
+		createEquipmentChartAction,
+		getEquipmentsWithModelsAction
 	} from '@/service/service'
 	import SShowMore from '@/components/show-more/s-show-more'
+	import moment from 'moment'
 	export default {
 		data(){
 			return {
@@ -102,10 +104,13 @@
 				modelInfo: {},
 				baseUrl: process.env.VUE_APP_API_BASE_URL + '/',
 				models: [],
+				models_pick: [],
+				models_pick_ids: [],
 				currentModelIndex: 0,
 				currentNum: 0,
 				refreshKey: 0,
-				selectNum: 1
+				selectNum: 1,
+				showModelPick: false
 			}
 		},
 		components: {
@@ -131,6 +136,76 @@
 			})
 		},
 		methods: {
+			handleShowModelPick(){
+				this.showModelPick = true
+			},
+			handleCloseModelPick(){
+				this.showModelPick = false
+			},
+			handleReBuy(){
+				if(!this.modelInfo.inventory){
+					return
+				}
+				this.$loadingOn()
+				getEquipmentsWithModelsAction(this.info.id).then(res=>{
+					const equipments = res.data ? [...res.data] : []
+					let origin_equipments = [{...this.info, models: [{...this.modelInfo, add_num: this.selectNum}]}]
+					let no_inventory_symbol = false
+					origin_equipments.map(equipment => {
+						equipment.url = this.baseUrl + equipment.cover
+						const equipmentFind = equipments.find(item => item.id === equipment.id)
+						if(equipmentFind){
+							equipment.models.map(model => {
+								model.url = this.baseUrl + model.multi_figure.split(',')[0]
+								const modelFind = equipmentFind.models.find(item => item.id === model.id)
+								if(modelFind && modelFind.inventory && modelFind.inventory >= model.add_num){
+									model.ok = true
+								}else{
+									no_inventory_symbol = true
+									model.ok = false
+								}
+							})
+							equipment.models = equipment.models.filter(model => model.ok)
+							equipment.ok = true
+						}else{
+							no_inventory_symbol = true
+							equipment.ok = false
+						}
+					})
+					origin_equipments = origin_equipments.filter(equipment => equipment.ok)
+					if(!origin_equipments.length){
+						this.$toast('器材已下架，请刷新重试')
+						this.$loadingOff()
+						return
+					}else if(no_inventory_symbol){
+						this.$toast('该型号已售罄，请刷新重试')
+					}
+					const mount = origin_equipments.map(equipment=>equipment.models).flat().map(model => model.is_discount ? (Number(model.discount) * Number(model.add_num)) : (Number(model.price) * Number(model.add_num))).reduce((a,b) => a + b)
+					const total_num = origin_equipments.map(equipment=>equipment.models).flat().map(model => model.add_num).reduce((a,b) => a + b)
+					const that = this
+					uni.navigateTo({
+						url: "/pages_store/payment-equipment",
+						success: function(res) {
+							// 通过eventChannel向被打开页面传送数据
+							res.eventChannel.emit('show', {
+								totalInfo: {
+									equipment: origin_equipments.length
+								},
+								equipments: [...(origin_equipments.map(equipment => { return {equipment, models: equipment.models} }))],
+								real_equipments: [...origin_equipments],
+								mount,
+								total_num,
+								order_time: moment(new Date, 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD HH:mm:ss'),
+								payment_origin: 'normal'
+							})
+						}
+					})
+					this.$loadingOff()
+				}).catch(err => {
+					console.log('err', err)
+					this.$loadingOff()
+				})
+			},
 			handleAddChart(){
 				this.$loadingOn()
 				createEquipmentChartAction({
@@ -203,6 +278,174 @@
 </script>
 
 <style lang="scss">
+	.confirm-start{
+		width: 100vw;
+		box-sizing: border-box;
+		padding: 36rpx 36rpx 0 36rpx;
+		
+		.confirm-start-title{
+			width: 100%;
+			font-size: 14px;
+			font-weight: bold;
+			color: #333;
+		}
+		
+		.confirm-start-footer{
+			width: 100%;
+			margin-top: 24rpx;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			
+			.confirm-start-footer-in{
+				width: 160rpx;
+				height: 60rpx;
+				white-space: nowrap;
+				border-radius: 24rpx;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				background: #4F68B0;
+				color: #fff;
+				font-weight: bold;
+				font-size: 12px;
+			}
+		}
+		
+		.confirm-start-body-model{
+			width: 100%;
+			margin-top: 24rpx;
+			
+			.confirm-start-body-model-item{
+				width: 100%;
+				margin-bottom: 24rpx;
+				display: flex;
+				justify-content: space-between;
+				position: relative;
+				box-sizing: border-box;
+				border: 2rpx solid #fff;
+				border-radius: 12rpx;
+				
+				&.active{
+					border: 2rpx solid #4F68B0;
+				}
+				
+				.body-model-delete{
+					width: 36rpx;
+					position: absolute;
+					right: 0;
+					top: 0;
+				}
+				
+				.body-model-left{
+					width: 100rpx;
+					height: 60rpx;
+					border-radius: 24rpx;
+					margin-right: 24rpx;
+					flex-shrink: 0;
+					
+					.body-model-left-img{
+						width: 100%;
+						height: 100%;
+						border-radius: 24rpx;
+					}
+				}
+				
+				.body-model-right{
+					flex-grow: 1;
+					position: relative;
+					
+					.body-model-right-title{
+						width: 100%;
+						font-size: 11px;
+						font-weight: bold;
+						overflow: hidden;
+						text-overflow: ellipsis;
+						display: -webkit-box;
+						-webkit-line-clamp: 1;
+						-webkit-box-orient: vertical;
+					}
+					
+					.body-model-right-description{
+						width: 100%;
+						font-size: 11px;
+						overflow: hidden;
+						text-overflow: ellipsis;
+						display: -webkit-box;
+						-webkit-line-clamp: 1;
+						-webkit-box-orient: vertical;
+						color: #aaa;
+						margin-top: 10rpx;
+					}
+					
+					.body-model-right-price{
+						color: #333;
+						font-size: 11px;
+						margin-top: 10rpx;
+						
+						.body-model-right-price-in{
+							font-weight: bold;
+							padding-left: 4rpx;
+						}
+						
+						.in-discount{
+							text-decoration:line-through;
+							color: #999;
+						}
+						
+						.show-discount{
+							color: #4F68B0;
+							padding-left: 16rpx;
+						}
+					}
+					
+					.body-model-right-select{
+						margin-top: 10rpx;
+					}
+					
+					.body-model-right-empty{
+						position: absolute;
+						top: 50%;
+						left: 50%;
+						box-sizing: border-box;
+						border: 2px solid #999;
+						color: #999;
+						font-size: 13px;
+						border-radius: 50%;
+						transform: translate(-50%,-50%) rotate(30deg);
+						display: flex;
+						align-items: center;
+						justify-content: center;
+						flex-direction: column;
+						width: 100rpx;
+						height: 100rpx;
+						opacity: 0.9;
+						z-index: 3;
+						
+						&::after{
+							content: ' ';
+							display: block;
+							width: 80rpx;
+							height: 80rpx;
+							border-radius: 50%;
+							border: 1px dashed #999;
+							position: absolute;
+							top: 50%;
+							left: 50%;
+							transform: translate(-50%,-50%) rotate(30deg);
+						}
+						
+						.body-model-right-empty-text{
+							white-space: nowrap;
+							font-weight: 800;
+						}
+					}
+				}
+			}
+		}
+		
+	}
+	
 	.equipment-detail-footer{
 		position: fixed;
 		left: 0;
