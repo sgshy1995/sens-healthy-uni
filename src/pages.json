@@ -134,6 +134,33 @@
 		    
 		}
 		,{
+		    "path" : "pages_mine/updateAuthenticate",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		}
+		,{
+		    "path" : "pages_mine/authenticate-manage",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		}
+		,{
+		    "path" : "pages_mine/authenticate-success",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		}
+		,{
 		    "path" : "pages_mine/address",
 		    "style" :                                                                                    
 		    {
@@ -162,6 +189,24 @@
 		}
 		,{
 		    "path" : "pages_mine/mineInfo-equipment-order-detail",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		}
+		,{
+		    "path" : "pages_mine/doctor",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		}
+		,{
+		    "path" : "pages_mine/doctor-time",
 		    "style" :                                                                                    
 		    {
 		        "navigationBarTitleText": "",
@@ -261,6 +306,17 @@
 		},
 		{
 		    "path" : "pages_store/payment-equipment-success",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "",
+		        "enablePullDownRefresh": false,
+		        "app-plus" : {
+		        	"bounce" : "none" // 取消APP端iOS回弹,避免与下拉刷新冲突 (可统一配在 'globalStyle')
+		        }
+		    }
+		},
+		{
+		    "path" : "pages/middle/index",
 		    "style" :                                                                                    
 		    {
 		        "navigationBarTitleText": "",

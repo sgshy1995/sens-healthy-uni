@@ -1,5 +1,5 @@
 <template>
-	<scroll-view scroll-y class="mine-wrapper">
+	<view class="mine-wrapper">
 		<!-- <u-navbar placeholder title="" leftIconSize="28" border bgColor="#fff">
 			<view slot="center">
 				
@@ -14,10 +14,16 @@
 			</view>
 		</u-navbar> -->
 		<view class="mine-top">
-			<view class="mine-top-in" :style="userInfo.background ? `background: url('${baseUrl + userInfo.background}') 100% 100% no-repeat !important;` : ''">
+			<view class="mine-top-in">
 				<u-status-bar></u-status-bar>
+				<image mode="aspectFill" v-if="userInfo.background" :src="baseUrl + userInfo.background" class="mine-top-in-image"></image>
+				<image mode="aspectFill" v-else src="@/static/images/mine/back1.jpeg" class="mine-top-in-image"></image>
 				<view class="mine-top-back"></view>
 				<view class="mine-top-in-avatar">
+					<view class="mine-top-doctor" v-if="userInfo.authenticate === 2" @click="handleShowDoctor">
+						<image src="@/static/images/mine/doctor-white.png" class="mine-top-doctor-img"></image>
+						<text class="mine-top-doctor-text">医师入口</text>
+					</view>
 					<view class="mine-top-icons">
 						<view class="mine-top-icon" @click="handleShowAction">
 							<u-icon name="photo-fill" color="#fff" size="20"></u-icon>
@@ -28,7 +34,7 @@
 					</view>
 					<view class="mine-avatar-logo">
 						<image class="mine-avatar-logo-in" :src="userInfo.avatar ? baseUrl + userInfo.avatar : avatarDefault" @click="showView(userInfo.avatar)"></image>
-						<image v-if="userInfo.authenticate !== null" src="@/static/images/mine/auth.png" class="mine-auth-logo"></image>
+						<image v-if="userInfo.authenticate === 2" src="@/static/images/mine/auth.png" class="mine-auth-logo"></image>
 					</view>
 				</view>
 				<view class="mine-top-in-info">
@@ -47,8 +53,8 @@
 						<text class="mine-top-in-button-text">点赞</text>
 					</view>
 				</view> -->
-				<view class="mine-top-in-des">
-					多年康复治疗经验，资深治疗师，擅长方向：颈椎，大腿。商务联系：18201659795。
+				<view class="mine-top-in-des" v-if="userInfo.authenticate === 2">
+					{{ userInfo.authenticate_info.fcc }}
 				</view>
 			</view>
 			<view class="mine-top-out">
@@ -154,8 +160,8 @@
 		<MineInfo @show="handleShowInfo" ref="MineInfo"></MineInfo>
 		<u-action-sheet @select="selectClick" cancelText="取消" :actions="actionList" :closeOnClickOverlay="true" :closeOnClickAction="true" :show="showAction" @close="handleCloseAction"></u-action-sheet>
 		<u-modal :show="showModal" showCancelButton confirmColor="#4F68B0" @confirm="handleResetBackground"
-			@cancel="showModal=false" content="确定将背景重置为默认吗？您的历史背景图片将会丢失"></u-modal>
-	</scroll-view>
+			@cancel="handleCloseModal" content="确定将背景重置为默认吗？您的历史背景图片将会丢失"></u-modal>
+	</view>
 </template>
 
 <script>
@@ -218,17 +224,15 @@
 				url: '/pages/index/index'
 			});
 		},
-		onShow(){
-			this.$nextTick(()=>{
-				this.$refs.MineInfo.loadData()
-			})
-		},
 		computed: {
 			userInfo(){
 				return this.$store.state.user.userInfo
 			},
 			info(){
 				return this.$store.state.user.info
+			},
+			authStatus(){
+				return this.$store.state.auth.authStatus
 			}
 		},
 		watch: {
@@ -248,11 +252,26 @@
 				this.$store.dispatch('getUserInfo')
 				this.$store.dispatch('getInfo')
 			}
+			this.$nextTick(()=>{
+				this.$refs.MineInfo.loadData()
+			})
 		},
 		onHide(){
 			this.handleCloseAction()
 		},
 		methods: {
+			handleShowDoctor(){
+				const that = this
+				uni.navigateTo({
+					url: "/pages_mine/doctor",
+					success: function(res) {
+						// 通过eventChannel向被打开页面传送数据
+						res.eventChannel.emit('show', {
+							
+						})
+					}
+				})
+			},
 			selectClick(item){
 				if(item.index === 0){
 					this.uploadImage()
@@ -262,19 +281,25 @@
 						indicator: 'none'
 					});
 				}else if(item.index === 2){
-					this.showModal = true
+					this.handleShowModal()
 				}
 			},
 			handleResetBackground(){
 				this.$loadingOn();
 				updateUserAction({id: this.userInfo.id, background: null}).then(res=>{
 					this.$loadingOff();
-					this.showModal = false
+					this.handleCloseModal()
 					this.$store.dispatch('getUserInfo')
 					this.$toast(res.message || '保存成功');
 				}).catch(err=>{
 					this.$loadingOff();
 				})
+			},
+			handleShowModal(){
+				this.showModal = true
+			},
+			handleCloseModal(){
+				this.showModal = false
 			},
 			uploadImage() {
 				const that = this
@@ -334,9 +359,13 @@
 			},
 			handleShowAction(){
 				this.showAction = true
+				uni.hideTabBar()
 			},
 			handleCloseAction(){
 				this.showAction = false
+				if (this.authStatus){
+					uni.showTabBar()
+				}
 			},
 			showView(url) {
 				if(!url) return
@@ -405,6 +434,7 @@
 		height: 100vh;
 		box-sizing: border-box;
 		position: relative;
+		overflow: hidden;
 		
 		.mine-top{
 			width: 100%;
@@ -414,8 +444,17 @@
 				width: 100%;
 				height: 100%;
 				position: absolute;
-				z-index: 1;
+				z-index: 2;
 				background-image: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.8));
+				top: 0;
+				left: 0;
+			}
+			
+			.mine-top-in-image{
+				width: 100%;
+				height: 100%;
+				position: absolute;
+				z-index: 1;
 				top: 0;
 				left: 0;
 			}
@@ -427,12 +466,38 @@
 				justify-content: center;
 				flex-direction: column;
 				position: relative;
-				background: url('@/static/images/mine/back1.jpeg') 100% 100% no-repeat;
-				z-index: 2;
+				z-index: 3;
 				box-sizing: border-box;
 				padding-bottom: 24rpx;
 				padding-top: 24rpx;
 				background-size: cover;
+				height: 500rpx;
+				
+				.mine-top-doctor{
+					position: absolute;
+					z-index: 2;
+					top: 8rpx;
+					left: 24rpx;
+					display: flex;
+					align-items: center;
+					height: 48rpx;
+					box-sizing: border-box;
+					padding: 0 16rpx;
+					border-radius: 24rpx;
+					background: #4F68B0;
+					
+					.mine-top-doctor-img{
+						width: 28rpx;
+						height: 28rpx;
+						margin-right: 12rpx;
+					}
+					
+					.mine-top-doctor-text{
+						font-size: 12px;
+						color: #fff;
+						font-weight: bold;
+					}
+				}
 				
 				.mine-top-icons{
 					position: absolute;
@@ -551,6 +616,11 @@
 					margin-top: 24rpx;
 					position: relative;
 					z-index: 2;
+					overflow: hidden;
+					text-overflow: ellipsis;
+					display: -webkit-box;
+					-webkit-line-clamp: 3;
+					-webkit-box-orient: vertical;
 				}
 			}
 		

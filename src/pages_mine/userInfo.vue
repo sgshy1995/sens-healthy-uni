@@ -44,6 +44,16 @@
 					</view>
 				</u-cell>
 			</u-cell-group>
+			<u-divider text="专业认证"></u-divider>
+			<u-cell-group>
+				<u-cell icon="integral-fill" title="专业认证">
+					<view slot="value" class="user-info-item" @click="handleShowAuthenticateManage">
+						<view class="in-text-newer"
+							:class="{empty: !userInfo.authenticate, loading: userInfo.authenticate === 1}">{{ userInfo.authenticate === 2 ? '您已通过认证' : userInfo.authenticate === 1 ? '认证审核中' : '您还未通过认证' }}</view>
+						<view class="in-icon">认证管理 ></view>
+					</view>
+				</u-cell>
+			</u-cell-group>
 			<u-divider text="地址管理"></u-divider>
 			<u-cell-group>
 				<u-cell icon="car-fill" title="默认地址">
@@ -146,6 +156,18 @@
 				const that = this
 				uni.navigateTo({
 					url: "/pages_mine/address",
+					success: function(res) {
+						// 通过eventChannel向被打开页面传送数据
+						res.eventChannel.emit('show', {
+							
+						})
+					}
+				})
+			},
+			handleShowAuthenticateManage(){
+				const that = this
+				uni.navigateTo({
+					url: "/pages_mine/authenticate-manage",
 					success: function(res) {
 						// 通过eventChannel向被打开页面传送数据
 						res.eventChannel.emit('show', {
@@ -514,6 +536,29 @@
 			
 			&.empty {
 				color: #bec4c9;
+			}
+		}
+		
+		.in-text-newer{
+			width: 300rpx;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			display: -webkit-box;
+			-webkit-line-clamp: 1;
+			-webkit-box-orient: vertical;
+			text-align: right;
+			font-size: 14px;
+			color: #61C63D;
+			font-weight: bold;
+			
+			&.empty {
+				color: #bec4c9;
+				font-weight: normal;
+			}
+			
+			&.loading{
+				color: #FAAD4B;
+				font-weight: bold;
 			}
 		}
 

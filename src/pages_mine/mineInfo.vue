@@ -31,6 +31,7 @@
 			<MineInfoQuestionAsk ref="MineInfoQuestionAsk" v-show="current === 0"></MineInfoQuestionAsk>
 			<MineInfoCourseOrder ref="MineInfoCourseOrder" v-show="current === 1"></MineInfoCourseOrder>
 			<MineInfoEquipmentOrder ref="MineInfoEquipmentOrder" v-show="current === 2"></MineInfoEquipmentOrder>
+			<MineInfoQuestionCollect ref="MineInfoQuestionCollect" v-show="current === 3"></MineInfoQuestionCollect>
 		</view>
 
 	</view>
@@ -38,6 +39,7 @@
 
 <script>
 	import MineInfoQuestionAsk from '@/pages_mine/mineInfo-question-ask.vue'
+	import MineInfoQuestionCollect from '@/pages_mine/mineInfo-question-collect.vue'
 	import MineInfoCourseOrder from '@/pages_mine/mineInfo-course-order.vue'
 	import MineInfoEquipmentOrder from '@/pages_mine/mineInfo-equipment-order.vue'
 	export default {
@@ -64,6 +66,7 @@
 		},
 		components: {
 			MineInfoQuestionAsk,
+			MineInfoQuestionCollect,
 			MineInfoCourseOrder,
 			MineInfoEquipmentOrder
 		},
@@ -79,6 +82,7 @@
 			loadData(){
 				this.$nextTick(()=>{
 					this.$refs.MineInfoQuestionAsk.getData()
+					this.$refs.MineInfoQuestionCollect.getData()
 					this.$refs.MineInfoCourseOrder.getData()
 					this.$refs.MineInfoEquipmentOrder.getData()
 				})

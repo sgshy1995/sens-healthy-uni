@@ -11,10 +11,11 @@ import store from "@/store/index"
 
 Vue.prototype.$store = store
 
-Vue.prototype.$toast  = function(message,icon){
+Vue.prototype.$toast  = function(message,icon,duration){
 	uni.showToast({
 		title: message,
-		icon: icon ? icon : 'none'
+		icon: icon ? icon : 'none',
+		duration: duration ? duration : 2000
 	})
 }
 

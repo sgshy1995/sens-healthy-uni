@@ -55,6 +55,18 @@
 					console.log('faile ------')
 				}
 			})
+			uni.onTabBarMidButtonTap(()=>{
+				const that = this
+				uni.navigateTo({
+					url: "/pages/middle/index",
+					success: function(res) {
+						// 通过eventChannel向被打开页面传送数据
+						res.eventChannel.emit('show', {
+							
+						})
+					}
+				})
+			})
 		},
 		onShow(){
 			if (uni.getStorageSync('SYS_USER_INFO') && uni.getStorageSync('SYS_USER_INFO').id) {
@@ -86,6 +98,7 @@
 			}, */
 			authStatus:{
 				handler(){
+					console.log('authStatus ================== authStatus', this.authStatus)
 					if(!this.authStatus){
 						uni.hideTabBar()
 					}else{

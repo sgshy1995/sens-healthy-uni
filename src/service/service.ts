@@ -59,7 +59,7 @@ export const getUserInfoByJWTAction = (): Promise<Record<string,any>> => {
 }
 
 // 根据 username 获取用户信息
-const getUserInfoByUsernameUrl = (username:string)=>`/user/${username}`
+const getUserInfoByUsernameUrl = (username:string)=>`/user/username/${username}`
 export const getUserInfoByUsernameAction = (user: Record<string,any>): Promise<Record<string,any>> => {
   return doRequestAction({
     url: getUserInfoByUsernameUrl(user.username),
@@ -127,6 +127,67 @@ export const infoUploadAction = (path:string): Promise<Record<string,any>> => {
 	return doUploadAction({
 		url: infoUploadUrl
 	},path)
+}
+
+// 认证 身份证正面 上传
+const authenticateIdentityCardFrontUploadUrl = '/authenticate/upload/identity_card_front'
+export const authenticateIdentityCardFrontUploadAction = (path:string): Promise<Record<string,any>> => {
+	return doUploadAction({
+		url: authenticateIdentityCardFrontUploadUrl
+	},path)
+}
+
+// 认证 身份证背面 上传
+const authenticateIdentityCardBackUploadUrl = '/authenticate/upload/identity_card_back'
+export const authenticateIdentityCardBackUploadAction = (path:string): Promise<Record<string,any>> => {
+	return doUploadAction({
+		url: authenticateIdentityCardBackUploadUrl
+	},path)
+}
+
+// 认证 执业证照 上传
+const authenticatePracticingCertificateUploadUrl = '/authenticate/upload/practicing_certificate'
+export const authenticatePracticingCertificateUploadAction = (path:string): Promise<Record<string,any>> => {
+	return doUploadAction({
+		url: authenticatePracticingCertificateUploadUrl
+	},path)
+}
+
+// 认证 工作证照 上传
+const authenticateEmployeeCardUploadUrl = '/authenticate/upload/employee_card'
+export const authenticateEmployeeCardUploadAction = (path:string): Promise<Record<string,any>> => {
+	return doUploadAction({
+		url: authenticateEmployeeCardUploadUrl
+	},path)
+}
+
+// 认证 提交
+const createAuthenticateUrl = '/authenticate'
+export const createAuthenticateAction = (authenticate: Record<string,any>): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: createAuthenticateUrl,
+    method: 'POST',
+	data: authenticate
+  })
+}
+
+// 认证 重新提交 修改
+const updateAuthenticateUrl = '/authenticate'
+export const updateAuthenticateAction = (authenticate: Record<string,any>): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: updateAuthenticateUrl,
+    method: 'PUT',
+	data: authenticate
+  })
+}
+
+// 认证 根据 用户id获取
+const findOneAuthenticateByUserIdUrl = '/authenticate/jwt'
+export const findOneAuthenticateByUserIdAction = (): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: findOneAuthenticateByUserIdUrl,
+    method: 'GET'
+  })
 }
 
 // 根据 jwt 信息充值
@@ -237,7 +298,7 @@ export const receiveOrderShipmentAction = (order_no: string): Promise<Record<str
 }
 
 // 更新用户信息
-const updateUserUrl = (id:number)=>`/user/${id}`
+const updateUserUrl = (id:number)=>`/user/id/${id}`
 export const updateUserAction = (user: Record<string,any>, device_id?: string, phone_capture?: string): Promise<Record<string,any>> => {
   return doRequestAction({
     url: updateUserUrl(user.id),
@@ -695,5 +756,43 @@ export const updateEquipmentChartAddNumAction = (id: string, type: "reduce" | "a
     url: updateEquipmentChartAddNumUrl,
     method: 'PUT',
 	data: {id, type}
+  })
+}
+
+// 讲师时间段列表获取
+const getLecturerTimesListUrl = '/lecturer_time'
+export const getLecturerTimesListAction = (): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: getLecturerTimesListUrl,
+    method: 'GET'
+  })
+}
+
+// 讲师时间段添加
+const createLecturerTimeUrl = '/lecturer_time'
+export const createLecturerTimeAction = (lecturerTime: Record<string,any>): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: createLecturerTimeUrl,
+    method: 'POST',
+	data: lecturerTime
+  })
+}
+
+// 讲师时间段更新
+const updateLecturerTimeUrl = '/lecturer_time'
+export const updateLecturerTimeAction = (lecturerTime: Record<string,any>): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: updateLecturerTimeUrl,
+    method: 'PUT',
+	data: lecturerTime
+  })
+}
+
+// 根据讲师时间段id删除
+const deleteLecturerTimeUrl = (id:string)=>`/lecturer_time/${id}`
+export const deleteLecturerTimeAction = (id: string): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: deleteLecturerTimeUrl(id),
+    method: 'DELETE'
   })
 }
