@@ -70,7 +70,9 @@
 					<text class="course-detail-videos-title-left">直播信息</text>
 				</view>
 				<view class="course-detail-videos-body">
-					<view class="course-detail-videos-body-text">共<text class="course-detail-videos-body-text-in"> {{ info.live_num }} </text>次直播。</view>
+					<view class="course-detail-videos-body-text">直播次数: <text class="course-detail-videos-body-text-in">{{ info.live_num }}次</text>。</view>
+					<view class="course-detail-videos-body-text">直播授课时间: <text class="course-detail-videos-body-text-in">1小时/次</text>。</view>
+					<view class="course-detail-videos-body-text">课程有效期: <text class="course-detail-videos-body-text-in">自购买之日起, 一年内</text>。</view>
 					<view class="course-detail-videos-body-text">面对面直播指导，由康复专家现场连线教学，全面、专业地解答您的问题！</view>
 					<view class="course-detail-videos-body-text">需提前预约时间。</view>
 				</view>
@@ -469,6 +471,7 @@
 						
 						.course-detail-videos-body-text-in{
 							font-weight: bold;
+							padding: 0 6rpx;
 						}
 					}
 					

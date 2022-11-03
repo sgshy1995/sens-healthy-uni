@@ -100,45 +100,46 @@
 								维护信息 >
 							</view>
 						</view>
-					
+						
 						<view class="record-body-bottom" v-if="info.injury_history">
-					
-							<view class="body-bottom-item">
-								<view class="body-bottom-item-title">
-									既往伤病史
+							<mescroll-uni ref="mescroll" :down="{onScroll:false, use: false}" :up="{onScroll:false, use: false, noMoreSize: 8, textNoMore: '', offset: 0}" :fixed="false">
+								<view class="body-bottom-item">
+									<view class="body-bottom-item-title">
+										既往伤病史
+									</view>
+									<view class="body-bottom-item-content">
+										{{ info.injury_history }}
+									</view>
 								</view>
-								<view class="body-bottom-item-content">
-									{{ info.injury_history }}
+													
+								<view class="body-bottom-item">
+									<view class="body-bottom-item-title">
+										近期伤病描述
+									</view>
+									<view class="body-bottom-item-content">
+										{{ info.injury_recent }}
+									</view>
 								</view>
-							</view>
-					
-							<view class="body-bottom-item">
-								<view class="body-bottom-item-title">
-									近期伤病描述
+													
+								<view class="body-bottom-item">
+									<view class="body-bottom-item-title">
+										出院小结
+									</view>
+									<view class="body-bottom-item-content">
+										{{ info.discharge_abstract }}
+									</view>
 								</view>
-								<view class="body-bottom-item-content">
-									{{ info.injury_recent }}
+													
+								<view class="body-bottom-item">
+									<view class="body-bottom-item-title">
+										影像学资料
+									</view>
+									<view class="body-bottom-item-content">
+										<u-album :urls="cover" rowCount="6" multipleSize="100rpx" singleSize="600rpx" maxCount="6">
+										</u-album>
+									</view>
 								</view>
-							</view>
-					
-							<view class="body-bottom-item">
-								<view class="body-bottom-item-title">
-									出院小结
-								</view>
-								<view class="body-bottom-item-content">
-									{{ info.discharge_abstract }}
-								</view>
-							</view>
-					
-							<view class="body-bottom-item">
-								<view class="body-bottom-item-title">
-									影像学资料
-								</view>
-								<view class="body-bottom-item-content">
-									<u-album :urls="cover" rowCount="6" multipleSize="100rpx" singleSize="600rpx" maxCount="6">
-									</u-album>
-								</view>
-							</view>
+							</mescroll-uni>
 						</view>
 						
 						<view class="record-body-empty" v-if="!info.injury_history">
@@ -738,6 +739,7 @@
 						.record-body-bottom {
 							width: 100%;
 							margin-top: 12rpx;
+							height: 300rpx;
 				
 							.body-bottom-item {
 								width: 100%;

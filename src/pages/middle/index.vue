@@ -17,7 +17,8 @@
 				</view>
 			</view>
 			<view class="middle-wrapper-top-right">
-				<image src="@/static/images/middle/search.png" class="middle-wrapper-top-right-img"></image>
+				<u-icon name="bell" color="#333" size="42rpx"></u-icon>
+				<!-- <image src="@/static/images/middle/search.png" class="middle-wrapper-top-right-img"></image> -->
 			</view>
 		</view>
 		<view class="middle-wrapper-info">
@@ -46,13 +47,17 @@
 			</view>
 		</view>
 		<view class="middle-wrapper-body">
-			
+			<middle-live-course ref="MiddleLiveCourse" v-show="showType === 'live'"></middle-live-course>
+		</view>
+		<view class="middle-wrapper-buy-button" @click="handleShowBuyCourse">
+			<image src="@/static/images/middle/store.png" class="middle-wrapper-buy-button-img"></image>
 		</view>
 	</view>
 </template>
 
 <script>
 	import { timeFix } from '@/utils/util'
+	import MiddleLiveCourse from "@/pages_middle/middle-live-course.vue"
 	export default {
 		data(){
 			return {
@@ -62,6 +67,14 @@
 				showType: 'live'
 			}
 		},
+		components: {
+			MiddleLiveCourse
+		},
+		onShow(){
+			this.$nextTick(() => {
+				this.$refs.MiddleLiveCourse.getData()
+			})
+		},
 		computed: {
 			userInfo(){
 				return this.$store.state.user.userInfo
@@ -70,7 +83,12 @@
 		methods: {
 			handleChangeShowType(type){
 				this.showType = type
-			}
+			},
+			handleShowBuyCourse() {
+				uni.switchTab({
+					url: "/pages/store/index"
+				})
+			},
 		}
 	}
 </script>
@@ -80,6 +98,20 @@
 		width: 100vw;
 		height: 100vh;
 		overflow: hidden;
+		
+		.middle-wrapper-buy-button{
+			position: fixed;
+			right: 24rpx;
+			bottom: 48rpx;
+			z-index: 999;
+			width: 96rpx;
+			height: 96rpx;
+			
+			.middle-wrapper-buy-button-img{
+				width: 96rpx;
+				height: 96rpx;
+			}
+		}
 		
 		.middle-wrapper-top{
 			width: 100%;

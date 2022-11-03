@@ -768,6 +768,16 @@ export const getLecturerTimesListAction = (): Promise<Record<string,any>> => {
   })
 }
 
+// 患者可预约时间段列表获取
+const getLecturerTimesCanBeBookedListUrl = '/lecturer_time/can_be_booked'
+export const getLecturerTimesCanBeBookedListAction = (options: Record<string,any>): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: getLecturerTimesCanBeBookedListUrl,
+    method: 'GET',
+	data: options
+  })
+}
+
 // 讲师时间段添加
 const createLecturerTimeUrl = '/lecturer_time'
 export const createLecturerTimeAction = (lecturerTime: Record<string,any>): Promise<Record<string,any>> => {
@@ -779,7 +789,7 @@ export const createLecturerTimeAction = (lecturerTime: Record<string,any>): Prom
 }
 
 // 讲师时间段更新
-const updateLecturerTimeUrl = '/lecturer_time'
+const updateLecturerTimeUrl = '/lecturer_time/normal'
 export const updateLecturerTimeAction = (lecturerTime: Record<string,any>): Promise<Record<string,any>> => {
   return doRequestAction({
     url: updateLecturerTimeUrl,
@@ -789,10 +799,57 @@ export const updateLecturerTimeAction = (lecturerTime: Record<string,any>): Prom
 }
 
 // 根据讲师时间段id删除
-const deleteLecturerTimeUrl = (id:string)=>`/lecturer_time/${id}`
-export const deleteLecturerTimeAction = (id: string): Promise<Record<string,any>> => {
+const deleteLecturerTimeUrl = '/lecturer_time/normal'
+export const deleteLecturerTimeAction = (id: string, canceled_reason?: string): Promise<Record<string,any>> => {
   return doRequestAction({
-    url: deleteLecturerTimeUrl(id),
-    method: 'DELETE'
+    url: deleteLecturerTimeUrl,
+    method: 'DELETE',
+	data: {
+		id,
+		canceled_reason
+	}
+  })
+}
+
+// 患者课程列表获取
+const getPatientCoursesListUrl = '/patient_course'
+export const getPatientCoursesListAction = (options: Record<string,any>): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: getPatientCoursesListUrl,
+    method: 'GET',
+	data: options
+  })
+}
+
+// 发起预约
+const createBookUrl = '/book'
+export const createBookAction = (book: Record<string,any>): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: createBookUrl,
+    method: 'POST',
+	data: book
+  })
+}
+
+// 修改预约
+const updateBookUrl = '/book/normal'
+export const updateBookAction = (book: Record<string,any>): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: updateBookUrl,
+    method: 'PUT',
+	data: book
+  })
+}
+
+// 取消预约
+const cancelBookUrl = '/book/normal'
+export const cancelBookAction = (id: string, canceled_reason: string): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: cancelBookUrl,
+    method: 'DELETE',
+	data: {
+		id,
+		canceled_reason
+	}
   })
 }
