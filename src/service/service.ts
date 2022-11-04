@@ -555,6 +555,15 @@ export const getVideoCourseByIdAction = (id: string): Promise<Record<string,any>
   })
 }
 
+// 视频根据id获取
+const getCourseInVideoByIdUrl = (id:string)=>`/course_in_video/${id}`
+export const getCourseInVideoByIdAction = (id: string): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: getCourseInVideoByIdUrl(id),
+    method: 'GET'
+  })
+}
+
 // 视频课程根据多个id获取
 const getVideoCoursesByIdsUrl = '/video_course/find/ids'
 export const getVideoCoursesByIdsAction = (ids: string): Promise<Record<string,any>> => {
@@ -852,5 +861,34 @@ export const cancelBookAction = (id: string, canceled_reason: string): Promise<R
 		id,
 		canceled_reason
 	}
+  })
+}
+
+// 专业康复课程列表获取
+const getMajortCoursesListUrl = '/major_course'
+export const getMajortCoursesListAction = (options: Record<string,any>): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: getMajortCoursesListUrl,
+    method: 'GET',
+	data: options
+  })
+}
+
+// 专业康复课程 根据id获取
+const getMajortCourseByIdUrl = (id:string)=>`/major_course/id/${id}`
+export const getMajortCourseByIdAction = (id: string): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: getMajortCourseByIdUrl(id),
+    method: 'GET'
+  })
+}
+
+// 修改 专业康复课程
+const updateMajortCourseUrl = '/major_course'
+export const updateMajortCourseAction = (majorCourse: Record<string,any>): Promise<Record<string,any>> => {
+  return doRequestAction({
+    url: updateMajortCourseUrl,
+    method: 'PUT',
+	data: majorCourse
   })
 }

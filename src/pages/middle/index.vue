@@ -48,6 +48,7 @@
 		</view>
 		<view class="middle-wrapper-body">
 			<middle-live-course ref="MiddleLiveCourse" v-show="showType === 'live'"></middle-live-course>
+			<middle-video-course ref="MiddleVideoCourse" v-show="showType === 'video'"></middle-video-course>
 		</view>
 		<view class="middle-wrapper-buy-button" @click="handleShowBuyCourse">
 			<image src="@/static/images/middle/store.png" class="middle-wrapper-buy-button-img"></image>
@@ -58,6 +59,10 @@
 <script>
 	import { timeFix } from '@/utils/util'
 	import MiddleLiveCourse from "@/pages_middle/middle-live-course.vue"
+	import MiddleVideoCourse from "@/pages_middle/middle-video-course.vue"
+	import {
+		updateMajortCourseAction
+	} from '@/service/service'
 	export default {
 		data(){
 			return {
@@ -68,19 +73,54 @@
 			}
 		},
 		components: {
-			MiddleLiveCourse
+			MiddleLiveCourse,
+			MiddleVideoCourse
 		},
 		onShow(){
 			this.$nextTick(() => {
 				this.$refs.MiddleLiveCourse.getData()
+				if (this.historyInfo.id) {
+					this.$loadingOn()
+					this.handleSaveHistory().then(res => {
+						this.$store.dispatch('changeHistoryInfo', {
+							id: '',
+							recent_num: 0,
+							recent_progress: ''
+						})
+						this.$refs.MiddleVideoCourse.getData().then(res => {
+							this.$loadingOff()
+						}).catch(err => {
+							this.$loadingOff()
+						})
+					})
+				}else{
+					this.$refs.MiddleVideoCourse.getData()
+				}
 			})
 		},
 		computed: {
 			userInfo(){
 				return this.$store.state.user.userInfo
+			},
+			historyInfo(){
+				return this.$store.state.history.info
 			}
 		},
 		methods: {
+			handleSaveHistory(){
+				console.log('handleSaveHistory --------- all')
+				return new Promise((resolve, reject) => {
+					updateMajortCourseAction({
+						id: this.historyInfo.id,
+						recent_num: this.historyInfo.recent_num,
+						recent_progress: this.historyInfo.recent_progress
+					}).then(res => {
+						resolve(res)
+					}).catch(err => {
+						resolve(err)
+					})
+				})
+			},
 			handleChangeShowType(type){
 				this.showType = type
 			},

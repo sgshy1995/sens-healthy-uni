@@ -5,6 +5,7 @@ Vue.use(Vuex)
 import global from '@/store/modules/global.js'
 import auth from '@/store/modules/auth.js'
 import user from '@/store/modules/user.js'
+import history from '@/store/modules/history.js'
 
 const store = new Vuex.Store({
     state: {},
@@ -13,7 +14,8 @@ const store = new Vuex.Store({
 	modules: {
 		global,
 		auth,
-		user
+		user,
+		history
 	}
 })
 export default store

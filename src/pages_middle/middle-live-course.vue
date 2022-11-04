@@ -214,6 +214,7 @@
 				})
 			},
 			handleChangeSort(sort) {
+				if(this.sort === sort) return
 				this.sort = sort
 				this.$loadingOn()
 				this.getData().then(res => {
