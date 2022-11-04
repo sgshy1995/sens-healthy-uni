@@ -761,10 +761,11 @@ export const updateEquipmentChartAddNumAction = (id: string, type: "reduce" | "a
 
 // 讲师时间段列表获取
 const getLecturerTimesListUrl = '/lecturer_time'
-export const getLecturerTimesListAction = (): Promise<Record<string,any>> => {
+export const getLecturerTimesListAction = (options: Record<string,any>): Promise<Record<string,any>> => {
   return doRequestAction({
     url: getLecturerTimesListUrl,
-    method: 'GET'
+    method: 'GET',
+	data: options
   })
 }
 

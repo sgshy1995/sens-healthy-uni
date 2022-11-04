@@ -44,7 +44,7 @@
 												<text class="cell-item-top-two-text">{{ `${u.start_time_show} ~ ${u.end_time_show}` }}</text>
 											</view>
 										</view>
-										<view class="cell-item-bottom" v-if="u.if_booked" @click.stop="handleShowBookInfo(u)">
+										<view class="cell-item-bottom" v-if="u.if_booked" @click.stop="handleShowPopupDetail(u)">
 											<view class="cell-item-bottom-total-left">
 												<view class="cell-item-bottom-left">
 													<image :src="u.course_info.url" class="cell-item-bottom-left-img"></image>
@@ -153,6 +153,129 @@
 				</view>
 			</view>
 		</u-modal>
+		<u-popup :overlayStyle="{zIndex: 9999}" zIndex="10000" :show="showPopupDetail" :closeOnClickOverlay="true" @close="handleClosePopupDetail" @open="handleShowPopupDetail">
+			<view class="popup-detail-wrpper">
+				<text class="popup-detail-wrpper-close" @click="handleClosePopupDetail">关闭</text>
+				<view class="popup-detail-wrpper-title">
+					<image src="@/static/images/mine/popup.png" class="popup-detail-wrpper-title-img"></image>
+					<text class="popup-detail-wrpper-title-text">预约详情</text>
+				</view>
+				<view class="popup-detail-wrpper-body">
+					<view class="popup-detail-wrpper-body-ready">
+						<image class="popup-detail-wrpper-body-ready-img" src="@/static/images/mine/popup-date.png"></image>
+						<text class="popup-detail-wrpper-body-ready-text">预约时间</text>
+					</view>
+					<view class="popup-detail-wrpper-body-time">
+						{{ `${real_start_time} ~ ${real_end_time}` }}
+					</view>
+				</view>
+				<view class="popup-detail-wrpper-course">
+					<view class="popup-detail-wrpper-course-title">
+						<image class="popup-detail-wrpper-course-title-img" src="@/static/images/mine/popup-course.png"></image>
+						<text class="popup-detail-wrpper-course-title-text">课程信息</text>
+					</view>
+					<view class="popup-detail-wrpper-course-body" v-if="totalInfo && totalInfo.course_info && totalInfo.course_info.id" @click="handleShowCourseDetail(totalInfo.course_info, 'live')">
+						<view class="chart-right-content">
+							<view class="body-item-top">
+								<view class="body-item-top-left">
+									<image class="body-item-top-left-img" :src="totalInfo.course_info.url">
+									</image>
+								</view>
+								<view class="body-item-top-right">
+									<view class="body-item-top-right-title">{{ totalInfo.course_info.title }}</view>
+									<view class="body-item-top-right-tag">
+										<text class="item-right-tag-in">
+											<text class="tag-in-text">{{ totalInfo.course_info.course_type_show }}</text>
+											<text class="tag-in-point">·</text>
+										</text>
+										<text class="item-right-tag-in">
+											<text class="tag-in-text">{{ `共${totalInfo.patient_course_info.course_live_num}次直播` }}</text>
+										</text>
+									</view>
+									<view class="body-item-top-right-description">
+										{{ totalInfo.course_info.description }}
+									</view>
+									<view class="body-item-top-right-manage">
+										<view>课时: <text class="body-item-top-right-manage-in">{{ `第 ${totalInfo.patient_course_info.learn_num + 1} / ${totalInfo.patient_course_info.course_live_num} 课时` }}</text></view>
+									</view>
+								</view>
+							</view>
+						</view>
+					</view>
+				</view>
+				<view class="popup-detail-wrpper-user">
+					<view class="popup-detail-wrpper-user-title">
+						<image class="popup-detail-wrpper-user-title-img" src="@/static/images/mine/popup-user.png"></image>
+						<text class="popup-detail-wrpper-user-title-text">患者信息</text>
+					</view>
+					<view class="popup-detail-wrpper-user-body">
+						<view class="popup-detail-wrpper-user-body-left">
+							<image @click="showAvatarView(totalInfo.user_info.avatar)" :src="totalInfo.user_info.avatar ? baseUrl + totalInfo.user_info.avatar : avatarDefault" class="popup-detail-wrpper-user-body-left-img"></image>
+						</view>
+						<view class="popup-detail-wrpper-user-body-right">
+							<view class="popup-detail-wrpper-user-body-right-name">
+								<text class="popup-detail-wrpper-user-body-right-name-text">{{ totalInfo.user_info.name ? totalInfo.user_info.name : '森普健康用户' }}</text>
+								<image src="@/static/images/mine/male.png" class="popup-detail-wrpper-user-body-right-name-gender" v-if="totalInfo.user_info.gender"></image>
+								<image src="@/static/images/mine/female.png" class="popup-detail-wrpper-user-body-right-name-gender" v-else></image>
+							</view>
+							<view class="popup-detail-wrpper-user-body-right-phone">
+								<u-icon name="phone-fill" color="#333" size="28rpx"></u-icon>
+								<u-tooltip :text="totalInfo.user_info.phone" overlay></u-tooltip>
+							</view>
+						</view>
+					</view>
+				</view>
+				<view class="popup-detail-wrpper-user-info">
+					<view class="popup-detail-wrpper-user-info-title">
+						<image class="popup-detail-wrpper-user-info-title-img" src="@/static/images/mine/popup-record.png"></image>
+						<text class="popup-detail-wrpper-user-info-title-text">患者病历档案</text>
+					</view>
+					<view class="popup-detail-wrpper-user-info-body">
+						<view class="popup-detail-wrpper-user-info-body-empty" v-if="!totalInfo.user_info_info.injury_history">暂无信息</view>
+						<view class="popup-detail-wrpper-user-info-body-in" v-else>
+							<mescroll-uni ref="mescroll" :down="{onScroll:false, use: false}" :up="{onScroll:false, use: false, noMoreSize: 8, textNoMore: '', offset: 0}" :fixed="false">
+								<view class="body-bottom-item">
+									<view class="body-bottom-item-title">
+										既往伤病史
+									</view>
+									<view class="body-bottom-item-content">
+										{{ totalInfo.user_info_info.injury_history }}
+									</view>
+								</view>
+													
+								<view class="body-bottom-item">
+									<view class="body-bottom-item-title">
+										近期伤病描述
+									</view>
+									<view class="body-bottom-item-content">
+										{{ totalInfo.user_info_info.injury_recent }}
+									</view>
+								</view>
+													
+								<view class="body-bottom-item">
+									<view class="body-bottom-item-title">
+										出院小结
+									</view>
+									<view class="body-bottom-item-content">
+										{{ totalInfo.user_info_info.discharge_abstract }}
+									</view>
+								</view>
+													
+								<view class="body-bottom-item">
+									<view class="body-bottom-item-title">
+										影像学资料
+									</view>
+									<view class="body-bottom-item-content">
+										<u-album :urls="covers" rowCount="6" multipleSize="100rpx" singleSize="600rpx" maxCount="6">
+										</u-album>
+									</view>
+								</view>
+							</mescroll-uni>
+						</view>
+					</view>
+				</view>
+			</view>
+		</u-popup>
 	</view>
 	
 </template>
@@ -173,6 +296,7 @@
 	export default {
 		data() {
 			return {
+				showPopupDetail: false,
 				upOrDown: 'down',
 				showDeleteModal: false,
 				showCancelModal: false,
@@ -228,6 +352,7 @@
 					'main-color': '#4F68B0'
 				},
 				baseUrl: process.env.VUE_APP_API_BASE_URL + '/',
+				avatarDefault: require('@/static/images/avatar-default.png'),
 				timeToday: moment(new Date(), 'YYYY-MM-DD').add(2, 'weeks').format('YYYY-MM-DD'),
 				pickDate: moment(new Date(), 'YYYY-MM-DD').format('YYYY-MM-DD'),
 				showType: 'spend',
@@ -254,7 +379,8 @@
 				dataSource: [],
 				showList: [],
 				showTimePick: false,
-				editId: ''
+				editId: '',
+				covers: []
 			}
 		},
 		onLoad(){
@@ -329,9 +455,6 @@
 			handleChangeUpOrDown(type){
 				this.upOrDown = type
 			},
-			handleShowBookInfo(record){
-				
-			},
 			onClickItemIn(e, record){
 				console.log('eeee', e)
 				// e.index
@@ -358,6 +481,27 @@
 					this.real_end_time = moment(new Date(`${now} ${this.start_time}:00`)).add('hours', 1).format('YYYY-MM-DD HH:mm')
 					this.handleShowCancelModal()
 				}
+			},
+			handleShowCourseDetail(record, type) {
+				const that = this
+				uni.navigateTo({
+					url: "/pages_store/course-detail",
+					success: function(res) {
+						// 通过eventChannel向被打开页面传送数据
+						res.eventChannel.emit('show', {
+							record,
+							type
+						})
+					}
+				})
+			},
+			showAvatarView(url) {
+				if(!url) return
+				// 预览图片
+				uni.previewImage({
+					urls: [this.baseUrl + url],
+					indicator: 'none'
+				});
 			},
 			handleShowDeleteModal(){
 				this.showDeleteModal = true
@@ -407,6 +551,36 @@
 			handleShowPopup(){
 				this.showPopup = true
 			},
+			handleShowPopupDetail(record){
+				if(record) {
+					this.totalInfo = {...record}
+					if (this.totalInfo.patient_course_info){
+						this.totalInfo.patient_course_info.validity_time_show = moment(new Date(this.totalInfo.patient_course_info.validity_time), 'YYYY-MM-DD').format('YYYY-MM-DD')
+					}
+					if (this.totalInfo.course_info){
+						const course_type_map = ['运动康复', '神经康复', '产后康复', '术后康复']
+						this.totalInfo.course_info.course_type_show = course_type_map[this.totalInfo.course_info.course_type]
+						this.totalInfo.course_info.url = this.baseUrl + this.totalInfo.course_info.cover
+					}
+					if (this.totalInfo.book_info){
+						this.totalInfo.book_info.book_start_time_show = moment(new Date(this.totalInfo.book_info.book_start_time), 'YYYY-MM-DD HH:mm').format('YYYY-MM-DD HH:mm')
+						this.totalInfo.book_info.book_end_time_show = moment(new Date(this.totalInfo.book_info.book_end_time), 'YYYY-MM-DD HH:mm').format('YYYY-MM-DD HH:mm')
+					}
+					if (this.totalInfo.user_info_info.image_data){
+						const pathList = this.totalInfo.user_info_info.image_data.split(',')
+						this.covers = pathList.map(path => this.baseUrl + path)
+					}
+					this.start_time = moment(new Date(record.start_time), 'HH:mm').format('HH:mm')
+					const now = moment(new Date(`${this.pickDate} 00:00:00`), 'YYYY-MM-DD').format('YYYY-MM-DD')
+					this.real_start_time = `${now} ${this.start_time}`
+					this.real_end_time = moment(new Date(`${now} ${this.start_time}:00`)).add('hours', 1).format('YYYY-MM-DD HH:mm')
+				}
+				this.showPopupDetail = true
+			},
+			handleClosePopupDetail(){
+				this.showPopupDetail = false
+				this.handleClosePopup()
+			},
 			handleClosePopup(){
 				this.showPopup = false
 				this.start_time = ''
@@ -422,6 +596,7 @@
 					user_info: {},
 					user_info_info: {}
 				}
+				this.covers = []
 			},
 			handleShowTimePick(){
 				this.showTimePick = true
@@ -802,6 +977,354 @@
 				box-sizing: border-box;
 				padding-bottom: 12rpx;
 			}
+		}
+	}
+	
+	.popup-detail-wrpper{
+		width: 100vw;
+		box-sizing: border-box;
+		padding: 24rpx;
+		position: relative;
+		
+		.popup-detail-wrpper-close{
+			position: absolute;
+			top: 24rpx;
+			right: 24rpx;
+			font-size: 14px;
+			color: #999;
+		}
+		
+		.popup-detail-wrpper-title{
+			width: 100%;
+			display: flex;
+			align-items: center;
+			
+			.popup-detail-wrpper-title-img{
+				width: 48rpx;
+				height: 48rpx;
+				margin-right: 24rpx;
+			}
+			
+			.ppopup-detail-wrpper-title-text{
+				font-size: 13px;
+				font-weight: bold;
+			}
+		}
+		
+		.popup-detail-wrpper-body{
+			width: 100%;
+			margin-top: 24rpx;
+			
+			.popup-detail-wrpper-body-ready{
+				display: flex;
+				align-items: center;
+				width: 100%;
+				margin-top: 24rpx;
+				
+				.popup-detail-wrpper-body-ready-img{
+					width: 32rpx;
+					height: 32rpx;
+					margin-right: 16rpx;
+				}
+				
+				.popup-detail-wrpper-body-ready-text{
+					font-size: 13px;
+					color: #333;
+					font-weight: bold;
+				}
+			}
+			
+			.popup-detail-wrpper-body-time{
+				font-size: 13px;
+				margin-top: 24rpx;
+			}
+		}
+		
+		.popup-detail-wrpper-user{
+			width: 100%;
+			margin-top: 24rpx;
+			
+			.popup-detail-wrpper-user-title{
+				width: 100%;
+				display: flex;
+				align-items: center;
+				
+				.popup-detail-wrpper-user-title-img{
+					width: 32rpx;
+					height: 32rpx;
+					margin-right: 16rpx;
+				}
+				
+				.popup-detail-wrpper-user-title-text{
+					font-size: 13px;
+					font-weight: bold;
+				}
+			}
+			
+			.popup-detail-wrpper-user-body{
+				margin-top: 24rpx;
+				width: 100%;
+				display: flex;
+				align-items: center;
+				
+				.popup-detail-wrpper-user-body-left{
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					margin-right: 24rpx;
+					
+					.popup-detail-wrpper-user-body-left-img{
+						width: 84rpx;
+						height: 84rpx;
+						border-radius: 50%;
+					}
+				}
+				
+				.popup-detail-wrpper-user-body-right{
+					
+					.popup-detail-wrpper-user-body-right-name{
+						display: flex;
+						align-items: center;
+						
+						.popup-detail-wrpper-user-body-right-name-text{
+							font-size: 13px;
+							padding-right: 24rpx;
+						}
+						
+						.popup-detail-wrpper-user-body-right-name-gender{
+							width: 28rpx;
+							height: 28rpx;
+						}
+					}
+					
+					.popup-detail-wrpper-user-body-right-phone{
+						margin-top: 12rpx;
+						display: flex;
+						align-items: center;
+						
+						.u-tooltip__wrapper__text{
+							font-size: 13px !important;
+							color: #333 !important;
+							padding-left: 12rpx !important;
+						}
+					}
+				}
+			}
+		}
+		
+		.popup-detail-wrpper-user-info{
+			width: 100%;
+			margin-top: 24rpx;
+			
+			.popup-detail-wrpper-user-info-title{
+				width: 100%;
+				display: flex;
+				align-items: center;
+				
+				.popup-detail-wrpper-user-info-title-img{
+					width: 32rpx;
+					height: 32rpx;
+					margin-right: 16rpx;
+				}
+				
+				.popup-detail-wrpper-user-info-title-text{
+					font-size: 13px;
+					font-weight: bold;
+				}
+			}
+			
+			.popup-detail-wrpper-user-info-body{
+				margin-top: 24rpx;
+				width: 100%;
+				
+				.popup-detail-wrpper-user-info-body-empty{
+					font-size: 12px;
+					color: #ccc;
+				}
+				
+				.popup-detail-wrpper-user-info-body-in {
+					width: 100%;
+					height: 400rpx;
+								
+					.body-bottom-item {
+						width: 100%;
+						border-top: 1px solid #999;
+						box-sizing: border-box;
+						padding-top: 12rpx;
+						margin-bottom: 12rpx;
+								
+						.body-bottom-item-title {
+							font-size: 12px;
+							font-weight: 700;
+							color: #999;
+							margin-bottom: 12rpx;
+						}
+								
+						.body-bottom-item-content {
+							font-size: 12px;
+						}
+					}
+				}
+			}
+		}
+		
+		.popup-detail-wrpper-course{
+			width: 100%;
+			margin-top: 24rpx;
+			box-sizing: border-box;
+			
+			.popup-detail-wrpper-course-title{
+				width: 100%;
+				display: flex;
+				align-items: center;
+				
+				.popup-detail-wrpper-course-title-img{
+					width: 32rpx;
+					height: 32rpx;
+					margin-right: 16rpx;
+				}
+				
+				.popup-detail-wrpper-course-title-text{
+					font-size: 13px;
+					font-weight: bold;
+				}
+			}
+			
+			.popup-detail-wrpper-course-body {
+				width: 100%;
+				display: flex;
+				justify-content: space-between;
+				background: #fff;
+				box-sizing: border-box;
+				position: relative;
+				margin-top: 24rpx;
+			
+				.chart-left-icon-delete {
+					margin-top: 24rpx;
+					width: 32rpx;
+					position: absolute;
+					right: 24rpx;
+					top: 0;
+				}
+			
+				.chart-left-icon {
+					width: 32rpx;
+					box-sizing: border-box;
+					margin-right: 24rpx;
+					flex-shrink: 0;
+					margin-top: 12rpx;
+			
+					.chart-left-icon-select {
+						display: flex;
+						justify-content: center;
+						align-items: center;
+						box-sizing: border-box;
+						border: 1px solid #B0B3BC;
+						height: 32rpx;
+						border-radius: 6rpx;
+			
+						.chart-left-icon-select-in {
+							display: none;
+						}
+			
+						&.active {
+							border-color: #4F68B0;
+							background: #4F68B0;
+			
+							.chart-left-icon-select-in {
+								display: block;
+							}
+						}
+					}
+			
+				}
+			
+				.chart-right-content {
+					flex-grow: 1;
+				}
+			
+				.body-item-top {
+					width: 100%;
+					display: flex;
+					align-items: center;
+			
+					.body-item-top-left {
+						width: 220rpx;
+						height: 160rpx;
+						border-radius: 24rpx;
+						flex-shrink: 0;
+						margin-right: 24rpx;
+						overflow: hidden;
+			
+						.body-item-top-left-img {
+							width: 100%;
+							height: 100%;
+						}
+					}
+			
+					.body-item-top-right {
+						flex-grow: 1;
+						height: 160rpx;
+			
+						.body-item-top-right-title {
+							width: calc(100% - 32rpx);
+							font-size: 12px;
+							overflow: hidden;
+							text-overflow: ellipsis;
+							display: -webkit-box;
+							-webkit-line-clamp: 1;
+							-webkit-box-orient: vertical;
+						}
+			
+						.body-item-top-right-tag {
+							width: 100%;
+							margin-top: 6rpx;
+							display: flex;
+							align-items: center;
+			
+							.item-right-tag-in {
+								font-size: 11px;
+								color: #333;
+								font-weight: 700;
+								color: #aaa;
+			
+								.tag-in-point {
+									box-sizing: border-box;
+									padding: 0 6rpx;
+								}
+							}
+						}
+			
+						.body-item-top-right-description {
+							font-size: 8px;
+							width: 100%;
+							margin-top: 6rpx;
+							overflow: hidden;
+							text-overflow: ellipsis;
+							display: -webkit-box;
+							-webkit-line-clamp: 2;
+							-webkit-box-orient: vertical;
+							color: #aaa;
+						}
+			
+						.body-item-top-right-manage {
+							color: #333;
+							font-size: 12px;
+							margin-top: 10rpx;
+							display: flex;
+							align-items: center;
+							justify-content: space-between;
+			
+							.body-item-top-right-manage-in {
+								padding-left: 6rpx;
+							}
+							
+						}
+			
+					}
+				}
+			}
+			
 		}
 	}
 	
