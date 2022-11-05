@@ -63,6 +63,14 @@ export const doRequestAction = (requestBase: RequestBase): Promise<any> => {
 					url: "/pages/guard/index?notAuth=1"
 				}) */
 				reject(res.message)
+			}else if (res && res.data && res.data.message && res.data.message.indexOf('用户不存在') > -1) { //服务器请求的，就处理
+				uni.showToast({title: res.data.message || '请重新登录',icon:'none'})
+				// @ts-ignore
+				store.dispatch('setAuthStatus', false)
+				/* uni.reLaunch({
+					url: "/pages/guard/index?notAuth=1"
+				}) */
+				reject(res.message)
 			}else if (res && res.data && res.statusCode >= 200 && res.statusCode < 300) { //服务器请求的，就处理
 			   resolve(res.data)
 	      }else{
@@ -73,6 +81,13 @@ export const doRequestAction = (requestBase: RequestBase): Promise<any> => {
 	
 	    req.fail = (err) => {
 			if (err && (err.statusCode === 401 || err.statusCode === 403)) {
+				// @ts-ignore
+				store.dispatch('setAuthStatus', false)
+				/* uni.reLaunch({
+					url: "/pages/guard/index?notAuth=1"
+				}) */
+			}
+			if (err && err.data && err.data.message && err.data.message.indexOf('用户不存在') > -1) {
 				// @ts-ignore
 				store.dispatch('setAuthStatus', false)
 				/* uni.reLaunch({
